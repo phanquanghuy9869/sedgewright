@@ -12,7 +12,7 @@ namespace Sedgewright.Infras.Services;
 
 public sealed class UpdateService : IUpdateService
 {
-    private const string GitHubRepositoryUrl = "https://github.com/huy-phan-prospa/sentinel";
+    private const string GitHubRepositoryUrl = "https://github.com/phanquanghuy9869/sedgewright";
     private readonly UpdateManager? _updateManager;
     private UpdateInfo? _availableUpdate;
 

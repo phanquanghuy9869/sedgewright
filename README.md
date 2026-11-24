@@ -155,6 +155,10 @@ If .NET 10 or newer is not available, a script installs the .NET 11 SDK into the
 
 Velopack packaging is host-specific; use the Windows, macOS, and Linux scripts on their corresponding operating systems. Windows produces a setup executable, macOS an app bundle and ZIP, and Linux an AppImage rather than a setup installer. See the [Velopack packaging overview](https://docs.velopack.io/packaging/overview) for release-file details.
 
+### Automated GitHub releases
+
+Each push to `main` runs the GitHub Actions release workflow. It builds `win-x64`, `osx-x64`, and `linux-x64` on native Windows, macOS, and Linux hosted runners, validates the Velopack outputs, and publishes a stable GitHub Release. The macOS job uses an Intel macOS runner.
+
 ### Run from source
 
 ```powershell
