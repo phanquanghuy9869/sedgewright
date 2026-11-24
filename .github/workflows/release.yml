@@ -136,6 +136,8 @@ jobs:
 
           compgen -G "release-assets/win-x64/*Setup.exe" >/dev/null ||
             { echo "::error::Missing Windows setup executable" >&2; exit 1; }
+          compgen -G "release-assets/win-x64/Sedgewright-win-Portable.zip" >/dev/null ||
+            { echo "::error::Missing Windows portable ZIP" >&2; exit 1; }
           compgen -G "release-assets/osx-x64/Sedgewright-osx-Portable.zip" >/dev/null ||
             { echo "::error::Missing macOS ZIP" >&2; exit 1; }
           unzip -Z1 "release-assets/osx-x64/Sedgewright-osx-Portable.zip" |
@@ -168,10 +170,11 @@ jobs:
             --jq .body > release-notes.md
 
           windows_asset="$(find release-assets/win-x64 -maxdepth 1 -type f -name '*Setup.exe' -print -quit)"
+          windows_portable_asset="$(find release-assets/win-x64 -maxdepth 1 -type f -name 'Sedgewright-win-Portable.zip' -print -quit)"
           macos_asset="$(find release-assets/osx-x64 -maxdepth 1 -type f -name 'Sedgewright-osx-Portable.zip' -print -quit)"
           linux_asset="$(find release-assets/linux-x64 -maxdepth 1 -type f -name '*.AppImage' -print -quit)"
 
-          for asset in "$windows_asset" "$macos_asset" "$linux_asset"; do
+          for asset in "$windows_asset" "$windows_portable_asset" "$macos_asset" "$linux_asset"; do
             if [[ -z "$asset" ]]; then
               echo "::error::Unable to find a platform download asset" >&2
               exit 1
@@ -187,9 +190,10 @@ jobs:
 
           {
             printf '\n\n## Downloads\n\n'
-            printf -- '- [Download for Windows](%s)\n' "$(asset_url "$windows_asset")"
-            printf -- '- [Download for macOS](%s)\n' "$(asset_url "$macos_asset")"
-            printf -- '- [Download for Linux](%s)\n' "$(asset_url "$linux_asset")"
+            printf -- '- [Download for Windows (installer)](%s)\n' "$(asset_url "$windows_asset")"
+            printf -- '- [Download for Windows (portable ZIP)](%s)\n' "$(asset_url "$windows_portable_asset")"
+            printf -- '- [Download for macOS (portable ZIP)](%s)\n' "$(asset_url "$macos_asset")"
+            printf -- '- [Download for Linux (AppImage, no install)](%s)\n' "$(asset_url "$linux_asset")"
           } >> release-notes.md
 
       - name: Publish release
