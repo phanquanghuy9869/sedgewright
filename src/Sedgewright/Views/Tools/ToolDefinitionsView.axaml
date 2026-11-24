@@ -1,0 +1,106 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:tools="using:Sedgewright.ViewModels.Tools"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Sedgewright.Views.Tools.ToolDefinitionsView"
+             x:DataType="tools:ToolDefinitionsViewModel">
+    <UserControl.Styles>
+        <Style Selector="Button.ghost-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="14,10,14,14"
+                    Spacing="12">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12"
+                  VerticalAlignment="Center">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="{Binding TitleText}"
+                               FontSize="18"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding SubtitleText}"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            VerticalAlignment="Center">
+                    <Button Content="Refresh"
+                            Command="{Binding RefreshCommand}"
+                            Classes="ghost-action" />
+                    <Button Content="Add tool"
+                            Command="{Binding AddCommand}"
+                            Classes="primary" />
+                </StackPanel>
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding Items}"
+                          IsVisible="{Binding HasItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="tools:ToolDefinitionListItemViewModel">
+                        <Border Classes="definition-list-row">
+                            <Grid RowDefinitions="Auto,Auto"
+                                  ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="12"
+                                  RowSpacing="3">
+                                <TextBlock Text="{Binding Name}"
+                                           TextTrimming="CharacterEllipsis"
+                                           FontSize="12"
+                                           FontWeight="SemiBold" />
+
+                                <StackPanel Grid.Column="1"
+                                            Orientation="Horizontal"
+                                            Spacing="3"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top">
+                                    <Button Content="Edit"
+                                            Command="{Binding EditCommand}"
+                                            Classes="ghost-action" />
+                                    <Button Content="Delete"
+                                            Command="{Binding DeleteCommand}"
+                                            IsEnabled="{Binding CanDelete}"
+                                            Classes="ghost-action" />
+                                </StackPanel>
+
+                                <TextBlock Grid.Row="1"
+                                           Grid.ColumnSpan="2"
+                                           Text="{Binding CompactSummary}"
+                                           FontSize="10"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <StackPanel IsVisible="{Binding HasNoItems}"
+                        Spacing="4"
+                        Margin="0,2,0,0">
+                <TextBlock Text="{Binding EmptyStateTitle}"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding EmptyStateText}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+
+            <TextBlock Text="{Binding StatusText}"
+                       IsVisible="{Binding HasStatusText}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

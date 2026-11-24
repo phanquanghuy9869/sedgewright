@@ -1,0 +1,146 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:chatViews="using:Sedgewright.Views.Chat"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.Chat.ChatTargetPickerWindow"
+        x:CompileBindings="False"
+        Title="{Binding WindowTitle}"
+        Width="940"
+        Height="720"
+        MinWidth="820"
+        MinHeight="580"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+  <Window.Styles>
+    <Style Selector="Button.pill-action">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="MinHeight" Value="0" />
+    </Style>
+
+    <Style Selector="Button.target-card">
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="12" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style Selector="Button.target-card:pointerover">
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+    </Style>
+  </Window.Styles>
+
+  <Border Classes="modal-surface">
+  <Grid Margin="16"
+        RowDefinitions="Auto,Auto,*,Auto"
+        RowSpacing="14">
+    <Grid ColumnDefinitions="*,Auto"
+          ColumnSpacing="10">
+      <StackPanel x:Name="TitleDragRegion"
+                  Spacing="4">
+        <TextBlock Text="{Binding WindowTitle}"
+                   FontSize="20"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="{Binding SubtitleText}"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      </StackPanel>
+
+      <Button Grid.Column="1"
+              Content="✕"
+              Command="{Binding CancelCommand}"
+              Classes="pill-action"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Top" />
+    </Grid>
+
+    <Grid Grid.Row="1"
+          ColumnDefinitions="*,Auto"
+          ColumnSpacing="10">
+      <TextBox Text="{Binding SearchText, Mode=TwoWay}"
+               PlaceholderText="Search agents and orchestrations"
+               HorizontalAlignment="Stretch" />
+
+      <Button Grid.Column="1"
+              Content="Refresh"
+              Command="{Binding RefreshCommand}"
+              Classes="pill-action" />
+    </Grid>
+
+    <ScrollViewer Classes="modal-scroll"
+                  Grid.Row="2"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Classes="modal-scroll-content"
+                  Spacing="16">
+        <Grid ColumnDefinitions="*,*"
+              ColumnSpacing="12">
+          <StackPanel Spacing="10"
+                      IsVisible="{Binding HasVisibleAgents}">
+            <TextBlock Text="Agents"
+                       FontSize="15"
+                       FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding VisibleAgents}"
+                          x:CompileBindings="False">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <chatViews:ChatTargetPickerRowView />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <StackPanel Grid.Column="1"
+                      Spacing="10"
+                      IsVisible="{Binding HasVisibleOrchestrations}">
+            <TextBlock Text="Orchestrations"
+                       FontSize="15"
+                       FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding VisibleOrchestrations}"
+                          x:CompileBindings="False">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <chatViews:ChatTargetPickerRowView />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Text="No chat targets match the current search."
+                   IsVisible="{Binding HasNoVisibleTargets}"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      </StackPanel>
+    </ScrollViewer>
+
+    <Grid Grid.Row="3"
+          ColumnDefinitions="*,Auto"
+          ColumnSpacing="10">
+      <StackPanel Spacing="3">
+        <TextBlock Text="{Binding SelectedTargetSummary}"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="{Binding StatusText}"
+                   IsVisible="{Binding HasStatusText}"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      </StackPanel>
+
+      <StackPanel Grid.Column="1"
+                  Orientation="Horizontal"
+                  Spacing="8">
+        <Button Content="Cancel"
+                Command="{Binding CancelCommand}"
+                Classes="pill-action" />
+      </StackPanel>
+    </Grid>
+  </Grid>
+  </Border>
+</Window>

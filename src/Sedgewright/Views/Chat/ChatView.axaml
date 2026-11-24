@@ -1,0 +1,234 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:shapes="using:Avalonia.Controls.Shapes"
+             xmlns:models="using:Sedgewright.Models"
+             xmlns:chatViews="using:Sedgewright.Views.Chat"
+             xmlns:sharedViews="using:Sedgewright.Views.Shared"
+             xmlns:vm="using:Sedgewright.ViewModels.Chat"
+             x:Class="Sedgewright.Views.Chat.ChatView"
+             x:DataType="vm:ChatViewModel">
+    <UserControl.Styles>
+        <StyleInclude Source="avares://Sedgewright/Views/Chat/ChatTypography.axaml" />
+
+        <Style Selector="Button.chat-select">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="6,4" />
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+
+        <Style Selector="TextBox.chat-input">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+
+        <Style Selector="Button.chat-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Button.chat-new-session">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="CornerRadius" Value="5" />
+        </Style>
+
+        <Style Selector="Button.approval-action">
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="MinHeight" Value="28" />
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="*,Auto"
+          RowSpacing="10"
+          Margin="8,6">
+        <ScrollViewer Grid.Row="0"
+                      x:Name="MessagesScrollViewer"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="4">
+                <ItemsControl ItemsSource="{Binding TimelineItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:ChatTimelineItem">
+                            <Grid Margin="0,0,0,2">
+                                <ContentControl Content="{Binding Message}"
+                                                IsVisible="{Binding IsMessage}">
+                                    <ContentControl.DataTemplates>
+                                        <DataTemplate x:DataType="models:MessageModel">
+                                            <chatViews:ChatMessageView />
+                                        </DataTemplate>
+                                    </ContentControl.DataTemplates>
+                                </ContentControl>
+
+                                <ContentControl Content="{Binding Activity}"
+                                                IsVisible="{Binding IsActivity}">
+                                    <ContentControl.DataTemplates>
+                                        <DataTemplate x:DataType="models:IntermediateUpdate">
+                                            <chatViews:ChatActivityView />
+                                        </DataTemplate>
+                                    </ContentControl.DataTemplates>
+                                </ContentControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <StackPanel IsVisible="{Binding HasApprovalRequest}"
+                            Spacing="8"
+                            Margin="0,4,0,8">
+                        <TextBlock Text="Approval required"
+                                   Classes="label"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource SystemAccentColor}" />
+                        <TextBlock Text="{Binding ApprovalRequestSummary}"
+                                   Classes="chat-body"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                        <Expander HorizontalAlignment="Stretch">
+                            <Expander.Header>
+                                <TextBlock Text="Show tool details"
+                                           Classes="small"
+                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            </Expander.Header>
+                            <TextBlock Text="{Binding ApprovalRequestDetails}"
+                                       Classes="chat-body"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </Expander>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="8">
+                            <Button Content="Approve"
+                                    Classes="approval-action"
+                                    Command="{Binding ApproveToolCommand}" />
+                            <Button Content="Reject"
+                                    Classes="approval-action"
+                                    Command="{Binding RejectToolCommand}" />
+                        </StackPanel>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="12,10">
+          <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto"
+                RowDefinitions="Auto,Auto"
+                RowSpacing="4"
+                ColumnSpacing="8">
+            <TextBox Grid.ColumnSpan="5"
+                     x:Name="ChatInput"
+                     Text="{Binding InputText, Mode=TwoWay}"
+                     PlaceholderText="Message the agent..."
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalContentAlignment="Top"
+                     Classes="chat-input" />
+
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       Text="{Binding StatusText}"
+                       Classes="small"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+            <Button Grid.Row="1"
+                    Grid.Column="2"
+                    Command="{Binding OpenTargetPickerCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Width="260"
+                    VerticalAlignment="Center"
+                    ToolTip.Tip="{Binding SelectedChatTargetSummary}"
+                    Classes="chat-select">
+                <TextBlock Text="{Binding SelectedChatTargetSummary}"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Classes="label" />
+            </Button>
+
+            <Button Grid.Row="1"
+                    Grid.Column="3"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding NewSessionCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    IsVisible="{Binding IsNewSessionButtonVisible}"
+                    ToolTip.Tip="Start a new agent session or reset this workflow run"
+                    Classes="chat-new-session">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="5">
+                    <shapes:Path Data="M12,5V19M5,12H19"
+                                 Width="12"
+                                 Height="12"
+                                 Stretch="Uniform"
+                                 Stroke="{DynamicResource SystemAccentColor}"
+                                 StrokeThickness="1.8"
+                                 StrokeLineCap="Round" />
+                    <TextBlock Text="New session"
+                               Classes="small"
+                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                </StackPanel>
+            </Button>
+
+            <sharedViews:LoadingIndicatorView Grid.Row="1"
+                                              Grid.Column="3"
+                                              DataContext="{Binding LoadingFeedback}"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center" />
+
+            <Button Grid.Row="1"
+                    Grid.Column="4"
+                    Command="{Binding SendCommand}"
+                    ToolTip.Tip="Send message"
+                    IsVisible="{Binding IsNotBusy}"
+                    Classes="chat-action">
+                <shapes:Path Data="M3.5,20.5L20.5,12L3.5,3.5V10.25L15.25,12L3.5,13.75V20.5Z"
+                             Width="14"
+                             Height="14"
+                             Stretch="Uniform"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             Fill="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </Button>
+
+            <Button Grid.Row="1"
+                    Grid.Column="4"
+                    Command="{Binding CancelCommand}"
+                    ToolTip.Tip="Cancel streaming response"
+                    IsVisible="{Binding IsBusy}"
+                    Classes="chat-action">
+                <shapes:Path Data="M8,5H10V19H8V5ZM14,5H16V19H14V5Z"
+                             Width="14"
+                             Height="14"
+                             Stretch="Uniform"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             Fill="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </Button>
+          </Grid>
+        </Border>
+    </Grid>
+</UserControl>

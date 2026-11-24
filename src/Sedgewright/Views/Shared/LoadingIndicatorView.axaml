@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:shared="using:Sedgewright.ViewModels.Shared"
+             x:Class="Sedgewright.Views.Shared.LoadingIndicatorView"
+             x:DataType="shared:LoadingFeedbackViewModel">
+    <UserControl.Styles>
+        <Style Selector="Button.loading-cancel">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Orientation="Horizontal"
+                Spacing="8"
+                IsVisible="{Binding IsLoading}">
+        <ProgressBar IsIndeterminate="True"
+                     VerticalAlignment="Center"
+                     Width="72"
+                     Height="3"
+                     Foreground="{DynamicResource AccentBrush}" />
+        <TextBlock Text="{Binding Message}"
+                   VerticalAlignment="Center"
+                   FontSize="11"
+                   Foreground="{DynamicResource MutedBrush}" />
+        <Button Content="Cancel"
+                Command="{Binding CancelCommand}"
+                IsVisible="{Binding CanCancel}"
+                Classes="loading-cancel" />
+    </StackPanel>
+</UserControl>

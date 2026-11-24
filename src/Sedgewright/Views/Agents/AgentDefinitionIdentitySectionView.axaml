@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:agents="using:Sedgewright.ViewModels.Agents"
+             mc:Ignorable="d"
+             x:Class="Sedgewright.Views.Agents.AgentDefinitionIdentitySectionView"
+             x:DataType="agents:AgentDefinitionInformationViewModel">
+    <StackPanel Spacing="10">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Name"
+                       FontWeight="SemiBold"
+                       FontSize="11" />
+            <TextBox Text="{Binding Name, Mode=TwoWay}"
+                     PlaceholderText="research-agent" />
+        </StackPanel>
+
+        <StackPanel Spacing="4">
+            <TextBlock Text="Description"
+                       FontWeight="SemiBold"
+                       FontSize="11" />
+            <TextBox Text="{Binding Description, Mode=TwoWay}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     MinHeight="64"
+                     VerticalContentAlignment="Top"
+                     PlaceholderText="A compact description of what this agent does" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

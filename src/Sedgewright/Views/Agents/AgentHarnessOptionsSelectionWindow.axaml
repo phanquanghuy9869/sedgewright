@@ -1,0 +1,178 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:agents="using:Sedgewright.ViewModels.Agents"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.Agents.AgentHarnessOptionsSelectionWindow"
+        x:DataType="agents:AgentHarnessOptionsSelectionViewModel"
+        Title="{Binding WindowTitle}"
+        Width="680"
+        Height="620"
+        MinWidth="520"
+        MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+    <Window.Styles>
+        <Style Selector="CheckBox.harness-option">
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="Padding" Value="6,0,0,0" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+    </Window.Styles>
+
+    <Border Classes="modal-surface">
+    <Grid Margin="14"
+          RowDefinitions="Auto,*,Auto"
+          RowSpacing="10">
+        <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="8">
+            <StackPanel x:Name="TitleDragRegion"
+                        Spacing="2">
+                <TextBlock Text="Harness options"
+                           FontSize="17"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="Configure the built-in capabilities for this Harness agent."
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Content="✕"
+                    Command="{Binding CancelCommand}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    Padding="9,5"
+                    CornerRadius="8"
+                    MinHeight="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top" />
+        </Grid>
+
+        <ScrollViewer Classes="modal-scroll"
+                      Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Classes="modal-scroll-content"
+                        Spacing="12">
+                <TextBlock Text="Capabilities"
+                       FontWeight="SemiBold"
+                       FontSize="11" />
+
+                <Grid ColumnDefinitions="*,*"
+                    RowDefinitions="Auto,Auto,Auto,Auto"
+                    ColumnSpacing="12"
+                    RowSpacing="7">
+                        <CheckBox Grid.Row="0"
+                                  Grid.Column="0"
+                                  Content="Disable todo provider"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding DisableTodoProvider, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="0"
+                                  Grid.Column="1"
+                                  Content="Disable agent mode"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding DisableAgentModeProvider, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="1"
+                                  Grid.Column="0"
+                                  Content="Disable file memory"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding DisableFileMemory, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="1"
+                                  Grid.Column="1"
+                                  Content="Disable web search"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding DisableWebSearch, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="2"
+                                  Grid.Column="0"
+                                  Content="Disable tool auto-approval"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding DisableToolAutoApproval, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="2"
+                                  Grid.Column="1"
+                                  Content="Disable default shared agent skills"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding DisableAgentSkillsProvider, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="3"
+                                  Grid.Column="0"
+                                  Content="Disable OpenTelemetry"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding DisableOpenTelemetry, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="3"
+                                  Grid.Column="1"
+                                  Content="Enable code execution"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding EnableCodeExecution, Mode=TwoWay}" />
+                </Grid>
+
+                <StackPanel Spacing="5">
+                    <TextBlock Text="Compaction and file access"
+                               FontWeight="SemiBold"
+                               FontSize="11" />
+                    <Grid ColumnDefinitions="*,*"
+                          RowDefinitions="Auto,Auto"
+                          ColumnSpacing="8"
+                          RowSpacing="8">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Max context window"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <TextBox Text="{Binding MaxContextWindowTokens, Mode=TwoWay}"
+                                     PlaceholderText="Max context window tokens" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1"
+                                    Spacing="2">
+                            <TextBlock Text="Max output tokens"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <TextBox Text="{Binding MaxOutputTokens, Mode=TwoWay}"
+                                     PlaceholderText="Max output tokens" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1"
+                                    Grid.ColumnSpan="2"
+                                    Spacing="2">
+                            <CheckBox Content="Enable file access"
+                                  Classes="harness-option"
+                                  IsChecked="{Binding EnableFileAccess, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="10">
+            <TextBlock Text="Changes are applied when you choose Apply."
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        Padding="10,6"
+                        CornerRadius="8"
+                        MinHeight="0" />
+                <Button Content="Apply"
+                        Command="{Binding ApplyCommand}"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        Padding="10,6"
+                        CornerRadius="8"
+                        MinHeight="0" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+    </Border>
+</Window>

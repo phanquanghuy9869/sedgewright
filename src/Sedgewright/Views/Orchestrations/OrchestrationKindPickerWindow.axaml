@@ -1,0 +1,110 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:orchestrations="using:Sedgewright.ViewModels.Orchestrations"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.Orchestrations.OrchestrationKindPickerWindow"
+        x:DataType="orchestrations:OrchestrationKindPickerViewModel"
+        Title="{Binding WindowTitle}"
+        Width="760"
+        Height="560"
+        MinWidth="680"
+        MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+    <Window.Styles>
+        <Style Selector="Button.pill-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+
+        <Style Selector="Button.kind-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="14" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+
+        <Style Selector="Button.kind-card:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+    </Window.Styles>
+
+    <Border Classes="modal-surface">
+    <Grid Margin="16"
+          RowDefinitions="Auto,*,Auto"
+          RowSpacing="18">
+        <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="10">
+            <StackPanel x:Name="TitleDragRegion"
+                        Spacing="4">
+                <TextBlock Text="{Binding WindowTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding SubtitleText}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Content="✕"
+                    Command="{Binding CancelCommand}"
+                    Classes="pill-action"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top" />
+        </Grid>
+
+        <ScrollViewer Classes="modal-scroll"
+                      Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl Classes="modal-scroll-content"
+                          ItemsSource="{Binding Options}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="orchestrations:OrchestrationKindPickerOptionViewModel">
+                        <Button Command="{Binding SelectCommand}"
+                                IsEnabled="{Binding IsEnabled}"
+                                Classes="kind-card"
+                                Margin="0,0,0,10">
+                            <Grid ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="12">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding Title}"
+                                               FontSize="15"
+                                               FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Description}"
+                                               TextWrapping="Wrap"
+                                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding AvailabilityText}"
+                                           VerticalAlignment="Top"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8">
+            <Button Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    Classes="pill-action" />
+        </StackPanel>
+    </Grid>
+    </Border>
+</Window>

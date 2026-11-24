@@ -1,0 +1,353 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:shapes="using:Avalonia.Controls.Shapes"
+        xmlns:agents="using:Sedgewright.Views.Agents"
+        xmlns:chat="using:Sedgewright.Views.Chat"
+        xmlns:mcp="using:Sedgewright.Views.Mcp"
+        xmlns:orch="using:Sedgewright.Views.Orchestrations"
+        xmlns:settings="using:Sedgewright.Views.Settings"
+        xmlns:tools="using:Sedgewright.Views.Tools"
+        xmlns:workspace="using:Sedgewright.Views.Workspace"
+        xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        mc:Ignorable="d"
+        x:Name="Root"
+        x:CompileBindings="False"
+        x:Class="Sedgewright.Views.MainWindow.MainWindow"
+        Title="Sedgewright"
+        WindowState="Maximized"
+        Width="1120"
+        Height="760"
+        MinWidth="860"
+        MinHeight="620">
+
+  <Window.Styles>
+    <Style Selector="Button.panel-toggle">
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+    </Style>
+    <Style Selector="Button.panel-toggle.active">
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="Background" Value="{DynamicResource AccentTintBrush}" />
+    </Style>
+  </Window.Styles>
+
+  <Grid ColumnDefinitions="Auto,*,Auto"
+        Background="{DynamicResource CanvasBrush}">
+    <Border Background="{DynamicResource SidebarBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,0,1,0"
+            Padding="10,16"
+            Width="{Binding IsRailOpen, Converter={StaticResource BoolToRailWidthConverter}}">
+      <Grid RowDefinitions="Auto,Auto,*,Auto"
+            RowSpacing="18">
+        <Button Classes="rail-icon-button"
+                HorizontalAlignment="Stretch"
+                Height="42"
+                Command="{Binding ToggleRailCommand}"
+                ToolTip.Tip="Expand or collapse navigation">
+          <Grid ColumnDefinitions="32,*"
+                ColumnSpacing="10"
+                HorizontalAlignment="Stretch">
+            <Border Width="30"
+                    Height="30"
+                    CornerRadius="9"
+                    Background="{DynamicResource AccentBrush}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+              <TextBlock Text="S"
+                         FontSize="16"
+                         FontWeight="Bold"
+                         Foreground="{DynamicResource AccentForegroundBrush}"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1"
+                        Spacing="1"
+                        VerticalAlignment="Center"
+                        IsVisible="{Binding IsRailOpen}">
+              <TextBlock Text="SENTINEL"
+                         FontSize="11"
+                         FontWeight="Bold" />
+              <TextBlock Text="AGENT WORKSPACE"
+                         Classes="small muted"
+                         FontSize="8" />
+            </StackPanel>
+          </Grid>
+        </Button>
+
+        <TextBlock Grid.Row="1"
+                   Text="WORKSPACE"
+                   Classes="eyebrow"
+                   Margin="4,0,0,0"
+                   IsVisible="{Binding IsRailOpen}" />
+
+        <ItemsControl Grid.Row="2"
+                      ItemsSource="{Binding SectionsView}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Button Command="{Binding DataContext.SelectSectionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                      Classes="rail-item-button"
+                      Classes.active="{Binding IsSelected}"
+                      CommandParameter="{Binding Key}"
+                      HorizontalAlignment="Stretch"
+                      Height="42"
+                      ToolTip.Tip="{Binding Title}">
+                <Grid ColumnDefinitions="34,*"
+                      ColumnSpacing="8"
+                      HorizontalAlignment="Stretch">
+                  <Border Classes="rail-symbol-surface"
+                          Width="28"
+                          Height="28"
+                          CornerRadius="7"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center">
+                    <shapes:Path Data="{Binding Icon}"
+                                 Width="16"
+                                 Height="16"
+                                 Stretch="Uniform"
+                                 Fill="Transparent"
+                                 Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                 StrokeThickness="1.7"
+                                 StrokeLineCap="Round"
+                                 StrokeJoin="Round"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center" />
+                  </Border>
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding Title}"
+                             Foreground="{DynamicResource TextBrush}"
+                             FontSize="12"
+                             TextTrimming="CharacterEllipsis"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Left"
+                             IsVisible="{Binding DataContext.IsRailOpen, RelativeSource={RelativeSource AncestorType=Window}}" />
+                </Grid>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Grid.Row="3"
+                    Spacing="4"
+                    IsVisible="{Binding IsRailOpen}"
+                    Margin="4,0,0,2">
+          <Border Height="1"
+                  Background="{DynamicResource BorderBrush}"
+                  Margin="0,0,0,7" />
+          <TextBlock Text="PRIVATE BY DESIGN"
+                     Classes="eyebrow"
+                     FontSize="8" />
+          <TextBlock Text="Local agent workspace"
+                     Classes="small muted" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Column="1"
+          Margin="26,20,26,24"
+          RowDefinitions="Auto,Auto,*"
+          RowSpacing="16">
+      <Grid ColumnDefinitions="*,Auto,Auto"
+            ColumnSpacing="16"
+            VerticalAlignment="Center">
+        <StackPanel Spacing="4">
+          <TextBlock Text="SENTINEL / WORKSPACE"
+                     Classes="eyebrow" />
+          <TextBlock Text="{Binding SelectedSectionTitle}"
+                     FontSize="25"
+                     FontWeight="SemiBold" />
+        </StackPanel>
+
+        <Button Grid.Column="2"
+                Classes="rail-icon-button panel-toggle"
+                Classes.active="{Binding IsWorkspaceTreeOpen}"
+                Width="32"
+                Height="32"
+                Command="{Binding ToggleWorkspaceTreeCommand}"
+                ToolTip.Tip="Show or hide workspace tree"
+                VerticalAlignment="Center">
+          <shapes:Path Data="M4 5.5h16v13H4z M15 5.5v13"
+                       Width="16"
+                       Height="16"
+                       Stretch="Uniform"
+                       Fill="Transparent"
+                       Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                       StrokeThickness="1.6"
+                       StrokeLineCap="Round"
+                       StrokeJoin="Round" />
+        </Button>
+
+        <Border Grid.Column="1"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="11,7"
+                VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal"
+                      Spacing="7"
+                      VerticalAlignment="Center">
+            <shapes:Ellipse Width="7"
+                     Height="7"
+                     Fill="{DynamicResource AccentBrush}"
+                     VerticalAlignment="Center" />
+            <TextBlock Text="READY"
+                       Classes="eyebrow"
+                       FontSize="9"
+                       Foreground="{DynamicResource TextBrush}"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <Border Grid.Row="1"
+              Background="{DynamicResource SelectedBrush}"
+              BorderBrush="{DynamicResource AccentBrush}"
+              BorderThickness="1"
+              CornerRadius="10"
+              Padding="14,10"
+              IsVisible="{Binding Settings.HasAvailableUpdate}">
+        <Grid ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="12">
+          <Border Width="28"
+                  Height="28"
+                  CornerRadius="8"
+                  Background="{DynamicResource AccentBrush}"
+                  VerticalAlignment="Center">
+            <TextBlock Text="↑"
+                       FontSize="15"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource AccentForegroundBrush}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+          </Border>
+          <StackPanel Grid.Column="1"
+                      Spacing="2"
+                      VerticalAlignment="Center">
+            <TextBlock Text="A new version is ready"
+                       FontSize="12"
+                       FontWeight="SemiBold" />
+            <TextBlock Text="{Binding Settings.AvailableVersion}"
+                       Classes="small muted" />
+          </StackPanel>
+          <Button Grid.Column="2"
+                  Content="Update now"
+                  Classes="primary"
+                  Command="{Binding Settings.UpdateNowCommand}"
+                  MinWidth="104"
+                  VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+
+      <Grid Grid.Row="2">
+        <chat:ChatView DataContext="{Binding Chat}"
+                       IsVisible="{Binding DataContext.IsChatSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <settings:SettingsView DataContext="{Binding Settings}"
+                               IsVisible="{Binding DataContext.IsSettingsSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <mcp:McpDefinitionsView DataContext="{Binding McpDefinitions}"
+                                IsVisible="{Binding DataContext.IsMcpSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <Border IsVisible="{Binding DataContext.IsSkillsSelected, RelativeSource={RelativeSource AncestorType=Window}}"
+                Background="Transparent" />
+
+        <orch:OrchestrationDefinitionsView DataContext="{Binding OrchestrationDefinitions}"
+                                           IsVisible="{Binding DataContext.IsAgentOrchestrationSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <agents:AgentDefinitionsView DataContext="{Binding AgentDefinitions}"
+                                     IsVisible="{Binding DataContext.IsAgentDefinitionsSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <tools:ToolDefinitionsView DataContext="{Binding ToolDefinitions}"
+                                   IsVisible="{Binding DataContext.IsToolDefinitionsSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <Border IsVisible="{Binding WorkspaceTree.IsFileOpen}"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="10">
+          <Grid RowDefinitions="Auto,*"
+                RowSpacing="0">
+            <Grid Grid.Row="0"
+                  ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12"
+                  Margin="14,10"
+                  VerticalAlignment="Center">
+              <StackPanel Spacing="2">
+                <TextBlock Text="{Binding WorkspaceTree.ActiveFileName}"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding WorkspaceTree.ActiveFilePath}"
+                           Classes="small muted"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip.Tip="{Binding WorkspaceTree.ActiveFilePath}" />
+              </StackPanel>
+              <Button Grid.Column="1"
+                      Classes="rail-icon-button"
+                      Width="28"
+                      Height="28"
+                      Command="{Binding WorkspaceTree.CloseFileCommand}"
+                      ToolTip.Tip="Close file"
+                      VerticalAlignment="Center">
+                <TextBlock Text="×"
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+
+            <Border Grid.Row="1"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,1,0,0"
+                    Padding="0">
+              <Grid>
+                <ae:TextEditor x:Name="FileEditor"
+                               IsReadOnly="True"
+                               ShowLineNumbers="True"
+                               FontFamily="Cascadia Mono,Consolas,Monospace"
+                               FontSize="12"
+                               Background="{DynamicResource SurfaceBrush}"
+                               Foreground="{DynamicResource TextBrush}"
+                               HorizontalScrollBarVisibility="Auto"
+                               VerticalScrollBarVisibility="Auto"
+                               IsVisible="{Binding WorkspaceTree.IsFileLoading, Converter={StaticResource BoolToInverseConverter}}" />
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Spacing="8"
+                            IsVisible="{Binding WorkspaceTree.IsFileLoading}">
+                  <TextBlock Text="Loading file..."
+                             Classes="small muted"
+                             HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <Border Margin="18"
+                        Padding="12"
+                        CornerRadius="8"
+                        Background="{DynamicResource ElevatedBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsVisible="{Binding WorkspaceTree.HasActiveFileError}">
+                  <TextBlock Text="{Binding WorkspaceTree.ActiveFileError}"
+                             Classes="small"
+                             TextWrapping="Wrap"
+                             MaxWidth="560"
+                             HorizontalAlignment="Center"
+                             TextAlignment="Center" />
+                </Border>
+              </Grid>
+            </Border>
+          </Grid>
+        </Border>
+      </Grid>
+    </Grid>
+
+    <workspace:WorkspaceTreePanelView Grid.Column="2"
+                                      DataContext="{Binding WorkspaceTree}"
+                                      IsVisible="{Binding DataContext.IsWorkspaceTreeOpen, RelativeSource={RelativeSource AncestorType=Window}}" />
+  </Grid>
+</Window>

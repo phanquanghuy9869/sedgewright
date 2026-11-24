@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:agents="using:Sedgewright.ViewModels.Agents"
+             mc:Ignorable="d"
+             x:Class="Sedgewright.Views.Agents.AgentDefinitionSkillsSectionView"
+             x:DataType="agents:AgentDefinitionSkillsViewModel">
+    <StackPanel Spacing="5">
+        <Button Command="{Binding AddSkillCommand}"
+                Classes="editor-action">
+            <StackPanel Orientation="Horizontal"
+                        Spacing="6">
+                <TextBlock Text="Skills"
+                           FontWeight="SemiBold"
+                           FontSize="11" />
+                <TextBlock Text="{Binding SkillSummary}"
+                           FontSize="11"
+                           TextTrimming="CharacterEllipsis"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+        </Button>
+
+        <ItemsControl ItemsSource="{Binding SkillItems}"
+                      IsVisible="{Binding HasSkillItems}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="agents:AgentSkillAttachmentItemViewModel">
+                        <Grid ColumnDefinitions="*,Auto,Auto"
+                          ColumnSpacing="5"
+                          Margin="0,2">
+                        <StackPanel Orientation="Horizontal"
+                                Spacing="5"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="{Binding SkillDirectory}"
+                                       TextTrimming="CharacterEllipsis"
+                                       FontSize="10"
+                                       ToolTip.Tip="{Binding SkillDirectory}" />
+                            <TextBlock Text="·"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <TextBlock Text="{Binding SelectedSkillsSummary}"
+                                       FontSize="10"
+                                   TextTrimming="CharacterEllipsis"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                Content="Edit"
+                                Command="{Binding EditCommand}"
+                                Classes="pill-action"
+                                FontSize="10" />
+                        <Button Grid.Column="2"
+                                Content="Remove"
+                                Command="{Binding RemoveCommand}"
+                                Classes="pill-action"
+                                FontSize="10" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+    </StackPanel>
+</UserControl>

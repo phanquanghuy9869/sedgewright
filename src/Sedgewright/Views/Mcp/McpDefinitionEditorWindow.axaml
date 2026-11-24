@@ -1,0 +1,170 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mcp="using:Sedgewright.ViewModels.Mcp"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.Mcp.McpDefinitionEditorWindow"
+        x:DataType="mcp:McpDefinitionEditorViewModel"
+        Title="{Binding WindowTitle}"
+        Width="920"
+        Height="700"
+        MinWidth="760"
+        MinHeight="560"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+    <Window.Styles>
+        <Style Selector="Button.pill-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+    </Window.Styles>
+
+    <Border Classes="modal-surface">
+    <Grid Margin="16"
+          RowDefinitions="Auto,*,Auto"
+          RowSpacing="18">
+        <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="10">
+            <StackPanel x:Name="TitleDragRegion"
+                        Spacing="4">
+                <TextBlock Text="{Binding WindowTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding SubtitleText}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Content="✕"
+                    Command="{Binding CancelCommand}"
+                    Classes="pill-action"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top" />
+        </Grid>
+
+        <ScrollViewer Classes="modal-scroll"
+                      Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Classes="modal-scroll-content"
+                        Spacing="18">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Core"
+                               FontWeight="SemiBold" />
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="12">
+                        <TextBox Text="{Binding Name, Mode=TwoWay}"
+                                 PlaceholderText="MCP name"
+                                 HorizontalAlignment="Stretch" />
+
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                            <RadioButton Content="Form"
+                                         IsChecked="{Binding IsFormConfigMode, Mode=TwoWay}"
+                                         GroupName="ConfigMode" />
+                            <RadioButton Content="Json"
+                                         IsChecked="{Binding IsJsonConfigMode, Mode=TwoWay}"
+                                         GroupName="ConfigMode" />
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="8">
+                        <RadioButton Content="stdio"
+                                     IsChecked="{Binding IsStdioTransport, Mode=TwoWay}"
+                                     GroupName="Transport" />
+                        <RadioButton Content="HTTP/SSE"
+                                     IsChecked="{Binding IsHttpTransport, Mode=TwoWay}"
+                                     GroupName="Transport" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Description"
+                               FontWeight="SemiBold" />
+                    <TextBox Text="{Binding Description, Mode=TwoWay}"
+                             PlaceholderText="Short description"
+                             HorizontalAlignment="Stretch" />
+                    <CheckBox Content="Read only"
+                              IsChecked="{Binding IsReadOnly, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel Spacing="8"
+                            IsVisible="{Binding IsFormConfigMode}">
+                    <TextBlock Text="Transport details"
+                               FontWeight="SemiBold" />
+
+                    <StackPanel Spacing="10"
+                                IsVisible="{Binding IsStdioFieldsVisible}">
+                        <TextBox Text="{Binding StdioCommand, Mode=TwoWay}"
+                                 PlaceholderText="Command"
+                                 HorizontalAlignment="Stretch" />
+                        <TextBox Text="{Binding StdioArgumentsText, Mode=TwoWay}"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 MinHeight="110"
+                                 VerticalContentAlignment="Top"
+                                 PlaceholderText="Arguments, one per line or comma-separated" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="10"
+                                IsVisible="{Binding IsHttpFieldsVisible}">
+                        <TextBox Text="{Binding HttpEndpoint, Mode=TwoWay}"
+                                 PlaceholderText="https://example.com/mcp"
+                                 HorizontalAlignment="Stretch" />
+                        <TextBox Text="{Binding HttpHeadersText, Mode=TwoWay}"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 MinHeight="110"
+                                 VerticalContentAlignment="Top"
+                                 PlaceholderText="Header=Value, one per line" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Spacing="8"
+                            IsVisible="{Binding IsJsonConfigMode}">
+                    <TextBlock Text="Raw Json config"
+                               FontWeight="SemiBold" />
+                    <TextBox Text="{Binding JsonConfigText, Mode=TwoWay}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             MinHeight="220"
+                             VerticalContentAlignment="Top"
+                             FontFamily="Consolas"
+                             PlaceholderText="Paste or edit the raw config Json here" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="12">
+            <TextBlock Text="{Binding ValidationText}"
+                       IsVisible="{Binding HasValidationText}"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Classes="pill-action" />
+                <Button Content="Save"
+                        Command="{Binding SaveCommand}"
+                        Classes="pill-action" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+    </Border>
+</Window>

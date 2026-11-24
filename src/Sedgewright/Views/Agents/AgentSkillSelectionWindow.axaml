@@ -1,0 +1,135 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:agents="using:Sedgewright.ViewModels.Agents"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.Agents.AgentSkillSelectionWindow"
+        x:DataType="agents:AgentSkillSelectionViewModel"
+        Title="{Binding WindowTitle}"
+        Width="560"
+        Height="560"
+        MinWidth="440"
+        MinHeight="420"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+    <Border Classes="modal-surface">
+    <Grid Margin="14"
+          RowDefinitions="Auto,Auto,*,Auto"
+          RowSpacing="10">
+        <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="8">
+            <StackPanel x:Name="TitleDragRegion"
+                        Spacing="2">
+                <TextBlock Text="Choose agent skills"
+                           FontSize="17"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="Select skills from your working directory or a chosen folder, plus common locations."
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Content="✕"
+                    Command="{Binding CancelCommand}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    Padding="9,5"
+                    CornerRadius="8"
+                    MinHeight="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top" />
+        </Grid>
+
+        <TextBox Grid.Row="1"
+                 Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 PlaceholderText="Search skills by name..."
+                 IsVisible="{Binding HasSkills}"
+                 FontSize="11"
+                 Padding="8,6" />
+
+        <ScrollViewer Classes="modal-scroll"
+                      Grid.Row="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Classes="modal-scroll-content"
+                        Spacing="4">
+                <ItemsControl ItemsSource="{Binding VisibleSkillGroups}"
+                              IsVisible="{Binding HasSkills}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="agents:AgentSkillSelectionGroupViewModel">
+                            <StackPanel Spacing="3"
+                                        Margin="0,0,0,9">
+                                <TextBlock Text="{Binding Name}"
+                                           FontWeight="SemiBold"
+                                           FontSize="12" />
+                                <TextBlock Text="{Binding SkillDirectory}"
+                                           TextWrapping="Wrap"
+                                           FontSize="10"
+                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                <ItemsControl ItemsSource="{Binding VisibleSkillItems}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="agents:AgentSkillSelectionItemViewModel">
+                                            <CheckBox Content="{Binding DisplayName}"
+                                                      IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                      Margin="0,2" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock Text="No skills were found in the searched locations."
+                           IsVisible="{Binding HasNoSkills}"
+                           FontSize="11"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+                <TextBlock Text="No skills match your search."
+                           IsVisible="{Binding HasNoMatches}"
+                           FontSize="11"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+                <TextBlock Text="{Binding StatusText}"
+                           IsVisible="{Binding HasStatusText}"
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource SystemControlErrorTextBrush}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="3"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="10">
+            <TextBlock Text="Selections are saved with the agent."
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        Padding="10,6"
+                        CornerRadius="8"
+                        MinHeight="0" />
+                <Button Content="Apply"
+                        Command="{Binding ApplyCommand}"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        Padding="10,6"
+                        CornerRadius="8"
+                        MinHeight="0" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+    </Border>
+</Window>

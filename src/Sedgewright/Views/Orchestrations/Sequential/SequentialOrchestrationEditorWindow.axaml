@@ -1,0 +1,174 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:orchestrations="using:Sedgewright.ViewModels.Orchestrations.Sequential"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.Orchestrations.Sequential.SequentialOrchestrationEditorWindow"
+        x:DataType="orchestrations:SequentialOrchestrationEditorViewModel"
+        Title="{Binding WindowTitle}"
+        Width="960"
+        Height="760"
+        MinWidth="820"
+        MinHeight="620"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+    <Window.Styles>
+        <Style Selector="Button.pill-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+
+        <Style Selector="Border.step-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+        </Style>
+    </Window.Styles>
+
+    <Border Classes="modal-surface">
+    <Grid Margin="16"
+          RowDefinitions="Auto,*,Auto"
+          RowSpacing="18">
+        <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="10">
+            <StackPanel Spacing="4">
+                <TextBlock Text="{Binding WindowTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding SubtitleText}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Content="✕"
+                    Command="{Binding CancelCommand}"
+                    Classes="pill-action"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top" />
+        </Grid>
+
+        <ScrollViewer Classes="modal-scroll"
+                      Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Classes="modal-scroll-content"
+                        Spacing="16">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Name"
+                               FontWeight="SemiBold" />
+                    <TextBox Text="{Binding Name, Mode=TwoWay}"
+                             PlaceholderText="research-sequence" />
+                </StackPanel>
+
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Description"
+                               FontWeight="SemiBold" />
+                    <TextBox Text="{Binding Description, Mode=TwoWay}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             MinHeight="84"
+                             VerticalContentAlignment="Top"
+                             PlaceholderText="A compact description of this workflow" />
+                </StackPanel>
+
+                     <CheckBox Content="Pass only agent responses to the next step"
+                                  IsChecked="{Binding ChainOnlyAgentResponses, Mode=TwoWay}" />
+
+                <StackPanel Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="10">
+                        <TextBlock Text="Steps"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+                        <Button Grid.Column="1"
+                                Content="Add step"
+                                Command="{Binding AddStepCommand}"
+                                Classes="pill-action" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding Steps}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="orchestrations:SequentialOrchestrationStepViewModel">
+                                <Border Classes="step-card"
+                                        Padding="12"
+                                        Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="Auto,*,Auto"
+                                          ColumnSpacing="12">
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="{Binding StepTitle}"
+                                                       FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding StepSummary}"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="8">
+                                            <ComboBox ItemsSource="{Binding AvailableAgents}"
+                                                      SelectedItem="{Binding SelectedAgent, Mode=TwoWay}"
+                                                      DisplayMemberBinding="{Binding Name}" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2"
+                                                    Orientation="Horizontal"
+                                                    Spacing="6"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Top">
+                                            <Button Content="↑"
+                                                    Command="{Binding MoveUpCommand}"
+                                                    Classes="pill-action" />
+                                            <Button Content="↓"
+                                                    Command="{Binding MoveDownCommand}"
+                                                    Classes="pill-action" />
+                                            <Button Content="Remove"
+                                                    Command="{Binding RemoveCommand}"
+                                                    Classes="pill-action" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="12">
+            <Border IsVisible="{Binding HasValidationText}"
+                    Classes="validation-error">
+                                <Grid ColumnDefinitions="Auto,*"
+                                            ColumnSpacing="8">
+                                        <TextBlock Text="!"
+                                                             Classes="validation-error-marker" />
+                                        <TextBlock Grid.Column="1"
+                                                             Text="{Binding ValidationText}"
+                                                             Classes="validation-error"
+                                                             TextWrapping="Wrap" />
+                                </Grid>
+            </Border>
+
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Classes="pill-action" />
+                <Button Content="Save"
+                        Command="{Binding SaveCommand}"
+                        Classes="pill-action" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+    </Border>
+</Window>

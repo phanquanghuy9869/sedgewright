@@ -1,0 +1,59 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug" />
+    <BuildType Name="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release" />
+    <Platform Name="Any CPU" />
+    <Platform Name="Any CPU.ActiveCfg" />
+    <Platform Name="Any CPU.Build.0" />
+    <Platform Name="x64" />
+    <Platform Name="x64.ActiveCfg" />
+    <Platform Name="x64.Build.0" />
+    <Platform Name="x86" />
+    <Platform Name="x86.ActiveCfg" />
+    <Platform Name="x86.Build.0" />
+  </Configurations>
+  <Project Path="Sedgewright.AppHost/Sedgewright.AppHost.csproj">
+    <BuildType Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|*" Project="Debug" />
+    <BuildType Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|*" Project="Debug" />
+  </Project>
+  <Project Path="Sedgewright/Sedgewright.csproj">
+    <BuildType Solution="*|Any CPU.ActiveCfg" Project="?" />
+    <BuildType Solution="*|Any CPU.Build.0" Project="?" />
+    <BuildType Solution="*|x64.ActiveCfg" Project="?" />
+    <BuildType Solution="*|x64.Build.0" Project="?" />
+    <BuildType Solution="*|x86.ActiveCfg" Project="?" />
+    <BuildType Solution="*|x86.Build.0" Project="?" />
+    <BuildType Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|Any CPU" Project="?" />
+    <BuildType Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|x64" Project="?" />
+    <BuildType Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|x86" Project="?" />
+    <BuildType Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|Any CPU" Project="?" />
+    <BuildType Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|x64" Project="?" />
+    <BuildType Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|x86" Project="?" />
+    <Platform Solution="*|Any CPU.ActiveCfg" Project="?" />
+    <Platform Solution="*|Any CPU.Build.0" Project="?" />
+    <Platform Solution="*|x64.ActiveCfg" Project="?" />
+    <Platform Solution="*|x64.Build.0" Project="?" />
+    <Platform Solution="*|x86.ActiveCfg" Project="?" />
+    <Platform Solution="*|x86.Build.0" Project="?" />
+    <Platform Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|Any CPU" Project="?" />
+    <Platform Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|x64" Project="?" />
+    <Platform Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|x86" Project="?" />
+    <Platform Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|Any CPU" Project="?" />
+    <Platform Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|x64" Project="?" />
+    <Platform Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|x86" Project="?" />
+    <Build Solution="*|Any CPU.ActiveCfg" Project="false" />
+    <Build Solution="*|Any CPU.Build.0" Project="false" />
+    <Build Solution="*|x64.ActiveCfg" Project="false" />
+    <Build Solution="*|x64.Build.0" Project="false" />
+    <Build Solution="*|x86.ActiveCfg" Project="false" />
+    <Build Solution="*|x86.Build.0" Project="false" />
+    <Build Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|Any CPU" Project="false" />
+    <Build Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|x64" Project="false" />
+    <Build Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Debug|x86" Project="false" />
+    <Build Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|Any CPU" Project="false" />
+    <Build Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|x64" Project="false" />
+    <Build Solution="{B6A6B8BF-1A86-4F5E-9E9E-18D9B6C64C5A}.Release|x86" Project="false" />
+  </Project>
+</Solution>

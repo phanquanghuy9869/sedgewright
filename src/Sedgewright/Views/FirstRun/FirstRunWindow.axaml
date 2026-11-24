@@ -1,0 +1,192 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Sedgewright.ViewModels.FirstRun"
+        xmlns:sharedViews="using:Sedgewright.Views.Shared"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.FirstRun.FirstRunWindow"
+        x:DataType="vm:FirstRunWindowViewModel"
+        Title="Sedgewright setup"
+        Width="1040"
+        Height="760"
+        MinWidth="860"
+        MinHeight="640">
+
+  <Grid RowDefinitions="Auto,*,Auto"
+        RowSpacing="16"
+        Margin="20">
+    <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="1"
+            CornerRadius="18"
+            Padding="16">
+      <StackPanel Spacing="4">
+        <TextBlock Text="{Binding TitleText}"
+                   FontSize="20"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="{Binding SubtitleText}"
+                   Classes="label"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      </StackPanel>
+    </Border>
+
+    <ScrollViewer Grid.Row="1"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+      <StackPanel>
+        <ItemsControl ItemsSource="{Binding Providers}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ProviderDraftViewModel">
+              <Border Margin="0,0,0,14"
+                      Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}"
+                      BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                      BorderThickness="1"
+                      CornerRadius="16"
+                      Padding="16">
+                <StackPanel Spacing="12">
+                  <Grid ColumnDefinitions="220,*,Auto"
+                        ColumnSpacing="12"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding DisplayName}"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="1"
+                             Text="{Binding ApiKey, Mode=TwoWay}"
+                             PlaceholderText="Provider key"
+                             IsVisible="{Binding ShowApiKeyInput}"
+                             HorizontalAlignment="Stretch" />
+
+                    <StackPanel Grid.Column="1"
+                                Spacing="3"
+                                IsVisible="{Binding IsCopilot}">
+                      <CheckBox Content="Use GitHub Copilot"
+                                IsChecked="{Binding IsEnabled, Mode=TwoWay}" />
+                      <TextBlock Text="Uses your existing Copilot runtime sign-in; no API key is stored."
+                                 Classes="small"
+                                 TextWrapping="Wrap"
+                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Content="{Binding DiscoverModelsButtonText}"
+                            Command="{Binding DiscoverModelsCommand}"
+                            IsVisible="{Binding ShowDiscoverModels}"
+                            MinWidth="140" />
+                  </Grid>
+
+                  <TextBlock Text="{Binding StatusText}"
+                       IsVisible="{Binding HasStatusText}"
+                       Classes="small"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+                  <sharedViews:LoadingIndicatorView DataContext="{Binding LoadingFeedback}" />
+
+                  <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                          BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                          BorderThickness="1"
+                          CornerRadius="999"
+                          Padding="10,6"
+                          HorizontalAlignment="Left"
+                          IsVisible="{Binding HasEnabledModelsSummary}">
+                    <TextBlock Text="{Binding EnabledModelsSummaryText}"
+                               Classes="small"
+                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                               TextTrimming="CharacterEllipsis" />
+                  </Border>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Border Margin="0,2,0,14"
+                Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="16">
+          <StackPanel Spacing="12">
+            <StackPanel Spacing="3">
+              <TextBlock Text="Setup preferences"
+                         FontSize="15"
+                         FontWeight="SemiBold" />
+              <TextBlock Text="Choose the defaults Sedgewright will use after setup."
+                         Classes="small"
+                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+
+            <StackPanel Spacing="6">
+              <TextBlock Text="Default working directory"
+                         FontWeight="SemiBold" />
+              <Grid ColumnDefinitions="*,Auto"
+                    ColumnSpacing="8">
+                <TextBox Text="{Binding DefaultWorkingDirectory, Mode=TwoWay}"
+                         PlaceholderText="Working directory"
+                         HorizontalAlignment="Stretch" />
+                <Button Grid.Column="1"
+                        Content="Browse..."
+                        Command="{Binding BrowseDefaultWorkingDirectoryCommand}"
+                        MinWidth="92" />
+              </Grid>
+            </StackPanel>
+
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10"
+                  VerticalAlignment="Center">
+              <StackPanel Spacing="2">
+                <TextBlock Text="Appearance"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="Use dark mode for the app. This choice will be saved for later."
+                           Classes="small"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+              </StackPanel>
+
+              <ToggleSwitch Grid.Column="1"
+                            IsChecked="{Binding IsDarkMode, Mode=TwoWay}"
+                            OffContent="Light"
+                            OnContent="Dark"
+                            VerticalAlignment="Center" />
+            </Grid>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <Border Grid.Row="2"
+            Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="1"
+            CornerRadius="18"
+            Padding="16">
+      <Grid RowDefinitions="Auto,Auto"
+        ColumnDefinitions="*,Auto"
+        RowSpacing="6"
+        ColumnSpacing="10">
+        <TextBlock Grid.Row="0"
+           Grid.ColumnSpan="2"
+           Text="{Binding StatusText}"
+           IsVisible="{Binding HasStatusText}"
+           Classes="small"
+           TextWrapping="Wrap"
+           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+        <TextBlock Grid.Row="1"
+           Text="Provider settings and setup preferences are saved when you continue."
+           Classes="label"
+           VerticalAlignment="Center"
+           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+        <Button Grid.Row="1"
+            Grid.Column="1"
+                Content="Continue"
+                Command="{Binding ContinueCommand}"
+                MinWidth="110" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

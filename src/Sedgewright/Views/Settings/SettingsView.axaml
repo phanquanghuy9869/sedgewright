@@ -1,0 +1,284 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Sedgewright.ViewModels.Settings"
+             xmlns:sharedViews="using:Sedgewright.Views.Shared"
+             x:Class="Sedgewright.Views.Settings.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+  <Grid RowDefinitions="*,Auto">
+    <ScrollViewer Grid.Row="0"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Spacing="0"
+                  Margin="14,12,14,16">
+        <Expander Header="Providers"
+                  IsExpanded="False"
+                  HorizontalAlignment="Stretch"
+                  Margin="0">
+          <StackPanel Spacing="8"
+                      Margin="0,10,0,10">
+            <TextBlock Text="Provider settings are saved here. GitHub Copilot uses your existing runtime sign-in and does not need an API key."
+                       Classes="label"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+            <ItemsControl ItemsSource="{Binding Providers}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ProviderSettingsItemViewModel">
+                  <Border Margin="0,0,0,8"
+                          Padding="12,10"
+                          BorderBrush="{DynamicResource BorderBrush}"
+                          BorderThickness="1"
+                          CornerRadius="9"
+                          Background="{DynamicResource SurfaceBrush}">
+                    <StackPanel Spacing="4">
+                      <Grid ColumnDefinitions="180,Auto,*,Auto,Auto"
+                            ColumnSpacing="10"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="{Binding DisplayName}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding BaseUrl, Mode=TwoWay}"
+                                 PlaceholderText="Base URL"
+                                 IsVisible="{Binding ShowBaseUrl}"
+                                 HorizontalAlignment="Stretch" />
+
+                        <Grid Grid.Column="2"
+                              VerticalAlignment="Center">
+                          <TextBlock Text="Uses your GitHub Copilot sign-in"
+                                     IsVisible="{Binding ShowCopilotEnabledStatus}"
+                                     VerticalAlignment="Center"
+                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+                          <Button Content="Enable GitHub Copilot"
+                                  Command="{Binding EnableCopilotCommand}"
+                                  IsVisible="{Binding ShowCopilotEnableButton}"
+                                  HorizontalAlignment="Left" />
+
+                          <TextBlock Text="{Binding ApiKeyMasked}"
+                                     IsVisible="{Binding IsApiKeyMaskedVisible}"
+                                     VerticalAlignment="Center"
+                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+                          <TextBox Text="{Binding ApiKey, Mode=TwoWay}"
+                                   IsVisible="{Binding IsApiKeyEditorVisible}"
+                                   PlaceholderText="Provider key"
+                                   HorizontalAlignment="Stretch" />
+                        </Grid>
+
+                        <Button Grid.Column="3"
+                                Command="{Binding ToggleApiKeyVisibilityCommand}"
+                                Content="👁"
+                                MinWidth="32"
+                                IsVisible="{Binding ShowApiKeyInput}"
+                                HorizontalAlignment="Right" />
+
+                        <Button Grid.Column="4"
+                                Content="{Binding DiscoverModelsButtonText}"
+                                Command="{Binding DiscoverModelsCommand}"
+                                IsVisible="{Binding ShowDiscoverModels}"
+                                MinWidth="128" />
+                      </Grid>
+
+                      <TextBlock Text="{Binding StatusText}"
+                                 IsVisible="{Binding HasStatusText}"
+                                 Classes="small"
+                                 TextWrapping="Wrap"
+                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+                      <sharedViews:LoadingIndicatorView DataContext="{Binding LoadingFeedback}" />
+
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Expander>
+
+        <Border Height="1"
+                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                Margin="0" />
+
+        <Expander Header="Chat"
+                  IsExpanded="False"
+                  HorizontalAlignment="Stretch"
+                  Margin="0">
+          <StackPanel Margin="0,10,0,10"
+                      Spacing="6">
+            <TextBlock Text="Chat settings will appear here."
+                       Classes="label"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+          </StackPanel>
+        </Expander>
+
+        <Border Height="1"
+                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                Margin="0" />
+
+        <Expander Header="Appearance"
+                  IsExpanded="False"
+                  HorizontalAlignment="Stretch"
+                  Margin="0">
+          <StackPanel Margin="0,10,0,10"
+                      Spacing="6">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10"
+                  VerticalAlignment="Center">
+              <StackPanel Spacing="2">
+                <TextBlock Text="Theme"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="Choose the preferred appearance for the app."
+                           Classes="small"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+              </StackPanel>
+
+              <ToggleSwitch Grid.Column="1"
+                            IsChecked="{Binding IsDarkMode, Mode=TwoWay}"
+                            OffContent="Light"
+                            OnContent="Dark"
+                            VerticalAlignment="Center" />
+            </Grid>
+          </StackPanel>
+        </Expander>
+
+        <Border Height="1"
+                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                Margin="0" />
+
+        <Expander Header="Advanced"
+                  IsExpanded="False"
+                  HorizontalAlignment="Stretch"
+                  Margin="0">
+          <StackPanel Margin="0,10,0,10"
+                      Spacing="6">
+            <TextBlock Text="Default working directory"
+                 FontWeight="SemiBold" />
+            <TextBlock Text="Used as the starting directory for future workspace operations."
+                 Classes="small"
+                 TextWrapping="Wrap"
+                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+            <Grid ColumnDefinitions="*,Auto"
+            ColumnSpacing="8">
+              <TextBox Text="{Binding DefaultWorkingDirectory, Mode=TwoWay}"
+                 PlaceholderText="Working directory"
+                 HorizontalAlignment="Stretch" />
+              <Button Grid.Column="1"
+                Content="Browse..."
+                Command="{Binding BrowseDefaultWorkingDirectoryCommand}"
+                MinWidth="92" />
+            </Grid>
+
+            <TextBlock Text="{Binding StatusText}"
+                 IsVisible="{Binding HasStatusText}"
+                 Classes="small"
+                 TextWrapping="Wrap"
+                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+          </StackPanel>
+        </Expander>
+
+              <Border Height="1"
+                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                Margin="0" />
+
+              <Expander Header="Updates"
+                  IsExpanded="False"
+                  HorizontalAlignment="Stretch"
+                  Margin="0">
+                <StackPanel Margin="0,10,0,10"
+                      Spacing="8">
+                  <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10"
+                  VerticalAlignment="Center">
+                    <StackPanel Spacing="2">
+                <TextBlock Text="Current version"
+                     FontWeight="SemiBold" />
+                <TextBlock Text="{Binding CurrentVersion}"
+                     Classes="small"
+                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                      Content="Check for updates"
+                      Command="{Binding CheckForUpdatesCommand}"
+                      MinWidth="132" />
+                  </Grid>
+
+                  <StackPanel Orientation="Horizontal"
+                  Spacing="8"
+                  IsVisible="{Binding IsCheckingForUpdates}">
+                    <ProgressBar IsIndeterminate="True"
+                     VerticalAlignment="Center"
+                     Width="72"
+                     Height="3" />
+                    <TextBlock Text="Checking for updates..."
+                   Classes="small"
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                  </StackPanel>
+
+                  <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10"
+                  IsVisible="{Binding HasAvailableUpdate}">
+                    <StackPanel Spacing="2">
+                <TextBlock Text="Update available"
+                     FontWeight="SemiBold" />
+                <TextBlock Text="{Binding AvailableVersion}"
+                     Classes="small"
+                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                      Content="Update now"
+                      Command="{Binding UpdateNowCommand}"
+                      MinWidth="104" />
+                  </Grid>
+
+                  <StackPanel Orientation="Horizontal"
+                  Spacing="8"
+                  IsVisible="{Binding IsApplyingUpdate}">
+                    <ProgressBar IsIndeterminate="True"
+                     VerticalAlignment="Center"
+                     Width="72"
+                     Height="3" />
+                    <TextBlock Text="Downloading update..."
+                   Classes="small"
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                  </StackPanel>
+
+                  <TextBlock Text="{Binding UpdateStatusText}"
+                       IsVisible="{Binding HasUpdateStatusText}"
+                       Classes="small"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                </StackPanel>
+              </Expander>
+      </StackPanel>
+    </ScrollViewer>
+
+    <Border Grid.Row="1"
+            Background="{DynamicResource SurfaceBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,1,0,0"
+            Padding="14,10,14,12">
+      <Grid ColumnDefinitions="*,Auto"
+            ColumnSpacing="10">
+        <TextBlock Text="Provider keys remain in memory until you save them."
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+        <Button Grid.Column="1"
+                Content="Save all"
+                Command="{Binding SaveAllCommand}"
+                Classes="primary"
+                MinWidth="120"
+                HorizontalAlignment="Right" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

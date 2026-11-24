@@ -1,0 +1,212 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:shapes="using:Avalonia.Controls.Shapes"
+             xmlns:md="using:Markdown.Avalonia"
+             xmlns:models="using:Sedgewright.Models"
+             x:Class="Sedgewright.Views.Chat.ChatMessageView"
+             x:DataType="models:MessageModel">
+    <UserControl.Resources>
+        <StreamGeometry x:Key="CopyIconGeometry">M16,1H4C2.9,1 2,1.9 2,3V17H4V3H16V1M19,5H8C6.9,5 6,5.9 6,7V21C6,22.1 6.9,23 8,23H19C20.1,23 21,22.1 21,21V7C21,5.9 20.1,5 19,5M19,21H8V7H19V21Z</StreamGeometry>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <StyleInclude Source="avares://Sedgewright/Views/Chat/ChatTypography.axaml" />
+
+        <Style Selector="Border.user-message">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="11,8" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="MaxWidth" Value="720" />
+        </Style>
+
+        <Style Selector="Button.message-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="2" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Opacity" Value="0.6" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.message-action:pointerover">
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Border Classes="user-message"
+                IsVisible="{Binding IsUser}">
+            <StackPanel Spacing="2">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4"
+                            HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding AuthorLabel}"
+                               Classes="label"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource SystemAccentColor}" />
+                    <Button Classes="message-action"
+                            Click="OnCopyMessageClick"
+                            ToolTip.Tip="Copy message">
+                        <shapes:Path Data="{StaticResource CopyIconGeometry}"
+                                     Width="10"
+                                     Height="10"
+                                     Stretch="Uniform"
+                                     Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                    </Button>
+                    <Button Classes="message-action"
+                            Click="OnToggleMessageExpansionClick"
+                            ToolTip.Tip="Show full or collapse message">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="3">
+                            <TextBlock Text="Show full"
+                                       IsVisible="{Binding IsExpanded, Converter={StaticResource BoolToInverseConverter}}"
+                                       Classes="small"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                            <TextBlock Text="Collapse"
+                                       IsVisible="{Binding IsExpanded}"
+                                       Classes="small"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <ScrollViewer IsVisible="{Binding IsExpanded, Converter={StaticResource BoolToInverseConverter}}"
+                              MaxHeight="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource DoubleToQuarterHeightConverter}}"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <SelectableTextBlock Text="{Binding Content}"
+                                         TextWrapping="Wrap"
+                                         Classes="chat-body"
+                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                </ScrollViewer>
+                <SelectableTextBlock IsVisible="{Binding IsExpanded}"
+                                     Text="{Binding Content}"
+                                     TextWrapping="Wrap"
+                                     Classes="chat-body"
+                                     Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </StackPanel>
+        </Border>
+
+        <StackPanel IsVisible="{Binding IsAssistant}"
+                    Spacing="2"
+                    HorizontalAlignment="Stretch">
+            <StackPanel IsVisible="{Binding IsError}"
+                        Spacing="2">
+                <TextBlock Text="{Binding AuthorLabel}"
+                           Classes="label"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                <DockPanel LastChildFill="True">
+                    <Button Classes="message-action"
+                            DockPanel.Dock="Right"
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center"
+                            Click="OnToggleMessageExpansionClick"
+                            ToolTip.Tip="Show or hide error details">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="3">
+                            <TextBlock Text="Show details"
+                                       IsVisible="{Binding IsExpanded, Converter={StaticResource BoolToInverseConverter}}"
+                                       Classes="small"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource SystemAccentColor}" />
+                            <TextBlock Text="Collapse"
+                                       IsVisible="{Binding IsExpanded}"
+                                       Classes="small"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource SystemAccentColor}" />
+                        </StackPanel>
+                    </Button>
+                    <SelectableTextBlock Text="{Binding Content}"
+                                         TextWrapping="Wrap"
+                                         Classes="chat-body"
+                                         VerticalAlignment="Center"
+                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                </DockPanel>
+                <ScrollViewer IsVisible="{Binding IsExpanded}"
+                              MaxHeight="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource DoubleToQuarterHeightConverter}}"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <SelectableTextBlock Text="{Binding ErrorDetails}"
+                                         TextWrapping="Wrap"
+                                         Classes="chat-body"
+                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                </ScrollViewer>
+            </StackPanel>
+            <StackPanel IsVisible="{Binding IsError, Converter={StaticResource BoolToInverseConverter}}"
+                        Spacing="2">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4">
+                    <TextBlock Text="{Binding AuthorLabel}"
+                               Classes="label"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                    <TextBlock Text="{Binding InProgressLabel}"
+                               IsVisible="{Binding IsInProgress}"
+                               Classes="small"
+                               FontStyle="Italic"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                    <Button Classes="message-action"
+                            Click="OnCopyMessageClick"
+                            ToolTip.Tip="Copy message">
+                        <shapes:Path Data="{StaticResource CopyIconGeometry}"
+                                     Width="10"
+                                     Height="10"
+                                     Stretch="Uniform"
+                                     Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                    </Button>
+                </StackPanel>
+                <TextBlock Text="Provider-supplied reasoning may be incomplete or contain sensitive context."
+                       IsVisible="{Binding IsReasoning}"
+                       Classes="small"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                <ScrollViewer IsVisible="{Binding IsInProgress}"
+                              MaxHeight="240"
+                              VerticalScrollBarVisibility="Auto"
+                              Loaded="OnStreamingCardScrollViewerLoaded">
+                    <md:MarkdownScrollViewer Markdown="{Binding Content}">
+                        <md:MarkdownScrollViewer.Styles>
+                            <StyleInclude Source="avares://Sedgewright/Views/Chat/ChatMarkdownStyles.axaml" />
+                        </md:MarkdownScrollViewer.Styles>
+                    </md:MarkdownScrollViewer>
+                </ScrollViewer>
+                <md:MarkdownScrollViewer IsVisible="{Binding IsInProgress, Converter={StaticResource BoolToInverseConverter}}"
+                                         Markdown="{Binding Content}">
+                    <md:MarkdownScrollViewer.Styles>
+                        <StyleInclude Source="avares://Sedgewright/Views/Chat/ChatMarkdownStyles.axaml" />
+                    </md:MarkdownScrollViewer.Styles>
+                </md:MarkdownScrollViewer>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel IsVisible="{Binding IsToolActivity}"
+                    Spacing="2"
+                    HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal"
+                        Spacing="4">
+                <TextBlock Text="{Binding AuthorLabel}"
+                           Classes="label"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                <Button Classes="message-action"
+                        Click="OnCopyMessageClick"
+                        ToolTip.Tip="Copy message">
+                    <shapes:Path Data="{StaticResource CopyIconGeometry}"
+                                 Width="10"
+                                 Height="10"
+                                 Stretch="Uniform"
+                                 Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                </Button>
+            </StackPanel>
+            <SelectableTextBlock Text="{Binding Content}"
+                                 TextWrapping="Wrap"
+                                 Classes="chat-body"
+                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:agents="using:Sedgewright.ViewModels.Agents"
+             xmlns:sharedViews="using:Sedgewright.Views.Shared"
+             mc:Ignorable="d"
+             x:Class="Sedgewright.Views.Agents.AgentDefinitionProviderModelSectionView"
+             x:DataType="agents:AgentDefinitionProviderModelViewModel">
+    <StackPanel Spacing="10">
+          <Grid ColumnDefinitions="Auto,*"
+              ColumnSpacing="8">
+            <StackPanel Spacing="5">
+                <TextBlock Text="Provider"
+                           FontWeight="SemiBold"
+                           FontSize="11" />
+                <ComboBox ItemsSource="{Binding Providers}"
+                          SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
+                          DisplayMemberBinding="{Binding DisplayName}" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1"
+                        Spacing="5">
+                <TextBlock Text="Model"
+                           FontWeight="SemiBold"
+                           FontSize="11" />
+                <TextBox x:Name="ModelTextBox"
+                         Text="{Binding Model, Mode=TwoWay}"
+                         PlaceholderText="gpt-5" />
+            </StackPanel>
+        </Grid>
+
+        <sharedViews:LoadingIndicatorView DataContext="{Binding LoadingFeedback}" />
+
+        <TextBlock Text="{Binding ModelStatusText}"
+                   IsVisible="{Binding HasModelStatusText}"
+                   TextWrapping="Wrap"
+                   FontSize="11"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+    </StackPanel>
+</UserControl>

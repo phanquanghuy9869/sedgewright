@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:shapes="using:Avalonia.Controls.Shapes"
+             xmlns:vm="using:Sedgewright.ViewModels.Workspace"
+             mc:Ignorable="d"
+             x:CompileBindings="False"
+             x:Class="Sedgewright.Views.Workspace.WorkspaceTreePanelView"
+             Width="248">
+
+  <Border Background="{DynamicResource SidebarBrush}"
+          BorderBrush="{DynamicResource BorderBrush}"
+          BorderThickness="1,0,0,0"
+          Padding="14,16">
+    <Grid RowDefinitions="Auto,Auto,*"
+          RowSpacing="10">
+      <TextBlock Text="WORKING DIRECTORY"
+                 Classes="eyebrow" />
+
+      <Border Grid.Row="1"
+              Height="1"
+              Background="{DynamicResource ListSeparatorBrush}" />
+
+      <TreeView Grid.Row="2"
+                ItemsSource="{Binding RootItems}"
+                SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                SelectionMode="Single"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                Background="Transparent"
+                BorderThickness="0"
+                Padding="0">
+        <TreeView.Styles>
+          <Style Selector="TreeViewItem">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="Padding" Value="4,2" />
+          </Style>
+          <Style Selector="TreeViewItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource ListRowHoverBrush}" />
+          </Style>
+          <Style Selector="TreeViewItem:selected">
+            <Setter Property="Background" Value="{DynamicResource SelectedBrush}" />
+          </Style>
+        </TreeView.Styles>
+
+        <TreeView.DataTemplates>
+          <TreeDataTemplate DataType="vm:WorkspaceTreeItemViewModel"
+                            ItemsSource="{Binding Children}">
+            <Panel>
+              <TextBlock Text="Loading..."
+                         Classes="small muted"
+                         IsVisible="{Binding IsPlaceholder}"
+                         VerticalAlignment="Center" />
+
+              <Grid ColumnDefinitions="Auto,*,Auto"
+                    ColumnSpacing="6"
+                    IsVisible="{Binding !IsPlaceholder}">
+                <shapes:Path Grid.Column="0"
+                             Data="{Binding Icon}"
+                             Width="14"
+                             Height="14"
+                             Stretch="Uniform"
+                             Fill="Transparent"
+                             Stroke="{DynamicResource MutedBrush}"
+                             StrokeThickness="1.4"
+                             StrokeLineCap="Round"
+                             StrokeJoin="Round"
+                             VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1"
+                           Text="{Binding Name}"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip.Tip="{Binding FullPath}" />
+                <TextBlock Grid.Column="2"
+                           Text="{Binding ErrorMessage}"
+                           Classes="small muted"
+                           VerticalAlignment="Center"
+                           MaxWidth="120"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip.Tip="{Binding ErrorMessage}" />
+              </Grid>
+            </Panel>
+          </TreeDataTemplate>
+        </TreeView.DataTemplates>
+      </TreeView>
+    </Grid>
+  </Border>
+</UserControl>

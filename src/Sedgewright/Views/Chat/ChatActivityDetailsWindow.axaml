@@ -1,0 +1,112 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="using:Sedgewright.Models"
+        x:Class="Sedgewright.Views.Chat.ChatActivityDetailsWindow"
+        x:DataType="models:IntermediateUpdate"
+        Title="{Binding ActivityTitle}"
+        Width="820"
+        Height="620"
+        MinWidth="560"
+        MinHeight="420"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+  <Border Classes="modal-surface">
+    <Grid Margin="18"
+          RowDefinitions="Auto,Auto,*,Auto"
+          RowSpacing="14">
+      <Grid ColumnDefinitions="*,Auto"
+            ColumnSpacing="12">
+        <StackPanel x:Name="TitleDragRegion"
+                    Spacing="4">
+          <TextBlock Text="{Binding ActivityTitle}"
+                     FontSize="19"
+                     FontWeight="SemiBold" />
+          <StackPanel Orientation="Horizontal"
+                      Spacing="8">
+            <TextBlock Text="{Binding Source}"
+                       Classes="small"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <TextBlock Text="{Binding CallId}"
+                       Classes="small"
+                       IsVisible="{Binding HasCallId}"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+          </StackPanel>
+        </StackPanel>
+        <Button Grid.Column="1"
+                Content="Close"
+                Click="OnCloseClick"
+                Padding="10,5"
+                MinHeight="0"
+                VerticalAlignment="Top" />
+      </Grid>
+
+      <Border Grid.Row="1"
+              Padding="10,8"
+              Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+              BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+              BorderThickness="1"
+              CornerRadius="6">
+        <StackPanel Spacing="4">
+          <TextBlock Text="SUMMARY"
+                     Classes="eyebrow"
+                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+          <SelectableTextBlock Text="{Binding Update}"
+                               TextWrapping="Wrap"
+                               Classes="chat-body"
+                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </StackPanel>
+      </Border>
+
+      <ScrollViewer Grid.Row="2"
+                    VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Auto">
+        <StackPanel Spacing="10">
+          <StackPanel Spacing="6"
+                      IsVisible="{Binding HasDetails}">
+            <TextBlock Text="FULL PAYLOAD"
+                       Classes="eyebrow"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="12">
+              <SelectableTextBlock Text="{Binding Details}"
+                                   FontFamily="monospace"
+                                   FontSize="11"
+                                   TextWrapping="NoWrap"
+                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </Border>
+          </StackPanel>
+
+          <StackPanel Spacing="6"
+                      IsVisible="{Binding HasProgress}">
+            <TextBlock Text="PROGRESS"
+                       Classes="eyebrow"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <TextBlock Text="{Binding ProgressSummary}"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="12">
+              <SelectableTextBlock Text="{Binding ProgressInstruction}"
+                                   FontFamily="monospace"
+                                   FontSize="11"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </Border>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+
+      <TextBlock Grid.Row="3"
+                 Text="Press Esc to close"
+                 Classes="small"
+                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+    </Grid>
+  </Border>
+</Window>

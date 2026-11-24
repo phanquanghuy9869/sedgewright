@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:agents="using:Sedgewright.ViewModels.Agents"
+             mc:Ignorable="d"
+             x:Class="Sedgewright.Views.Agents.AgentDefinitionToolsSectionView"
+             x:DataType="agents:AgentDefinitionToolsViewModel">
+    <StackPanel Spacing="5">
+        <Button Command="{Binding OpenToolPickerCommand}"
+                Classes="editor-action">
+            <StackPanel Orientation="Horizontal"
+                        Spacing="6">
+                <TextBlock Text="Tools"
+                           FontWeight="SemiBold"
+                           FontSize="11" />
+                <TextBlock Text="{Binding ToolSummary}"
+                           FontSize="11"
+                           TextTrimming="CharacterEllipsis"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</UserControl>

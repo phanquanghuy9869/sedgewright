@@ -1,0 +1,133 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="using:Sedgewright.Models"
+        xmlns:tools="using:Sedgewright.ViewModels.Tools"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.Tools.ToolDefinitionEditorWindow"
+        x:DataType="tools:ToolDefinitionEditorViewModel"
+        Title="{Binding WindowTitle}"
+        Width="620"
+        Height="420"
+        MinWidth="520"
+        MinHeight="360"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+    <Window.Styles>
+        <Style Selector="Button.pill-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+    </Window.Styles>
+
+    <Border Classes="modal-surface">
+    <Grid Margin="16"
+          RowDefinitions="Auto,*,Auto"
+          RowSpacing="18">
+        <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="10">
+            <StackPanel x:Name="TitleDragRegion"
+                        Spacing="4">
+                <TextBlock Text="{Binding WindowTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding SubtitleText}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Content="✕"
+                    Command="{Binding CancelCommand}"
+                    Classes="pill-action"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top" />
+        </Grid>
+
+        <ScrollViewer Classes="modal-scroll"
+                      Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Classes="modal-scroll-content"
+                        Spacing="16">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Tool"
+                               FontWeight="SemiBold" />
+                    <TextBox Text="{Binding Name, Mode=TwoWay}"
+                             PlaceholderText="Tool name"
+                             HorizontalAlignment="Stretch" />
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Description"
+                               FontWeight="SemiBold" />
+                    <TextBox Text="{Binding ToolDescription, Mode=TwoWay}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             MinHeight="72"
+                             PlaceholderText="Optional tool description"
+                             HorizontalAlignment="Stretch" />
+                </StackPanel>
+
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="14"
+                      RowDefinitions="Auto,Auto"
+                      RowSpacing="8">
+                    <TextBlock Text="Type"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1"
+                               Text="Workflow"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+                    <TextBlock Grid.Row="1"
+                               Text="Workflow"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="1"
+                              Grid.Column="1"
+                              ItemsSource="{Binding WorkflowOptions}"
+                              SelectedItem="{Binding SelectedWorkflow, Mode=TwoWay}"
+                              PlaceholderText="{Binding WorkflowOptionsText}"
+                              HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:OrchestrationListItemSnapshot">
+                                <TextBlock Text="{Binding DisplayLabel}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="12">
+            <TextBlock Text="{Binding ValidationText}"
+                       IsVisible="{Binding HasValidationText}"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Classes="pill-action" />
+                <Button Content="Save"
+                        Command="{Binding SaveCommand}"
+                        Classes="pill-action" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+    </Border>
+</Window>

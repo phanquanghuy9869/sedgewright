@@ -1,0 +1,50 @@
+{
+  "stateBag": {
+    "InMemoryChatHistoryProvider": {
+      "messages": [
+        {
+          "role": "user",
+          "contents": [
+            {
+              "$type": "text",
+              "text": "hey guys how are u today"
+            }
+          ]
+        },
+        {
+          "authorName": "Chinese agent",
+          "createdAt": "2026-07-23T13:30:30+00:00",
+          "role": "assistant",
+          "contents": [
+            {
+              "$type": "text",
+              "text": "英语：嘿，大家，今天你们怎么样？"
+            }
+          ],
+          "messageId": "chatcmpl-E4nnKtSRKDmUQdnXaKv256FGrGT4p"
+        },
+        {
+          "role": "user",
+          "contents": [
+            {
+              "$type": "text",
+              "text": "Hello pretty Chinese girl"
+            }
+          ]
+        },
+        {
+          "authorName": "Chinese agent",
+          "createdAt": "2026-07-23T14:12:11+00:00",
+          "role": "assistant",
+          "contents": [
+            {
+              "$type": "text",
+              "text": "英语：你好，漂亮的中国女孩"
+            }
+          ],
+          "messageId": "chatcmpl-E4oRfV6ETSH2efI12xIAYgz7bD2h2"
+        }
+      ]
+    }
+  }
+}

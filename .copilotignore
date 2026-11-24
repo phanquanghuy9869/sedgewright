@@ -1,0 +1,43 @@
+# Build outputs
+**/bin/
+**/obj/
+**/TestResults/
+**/artifacts/
+**/publish/
+
+# IDE and editor state
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.sln.ide
+*.sln.iml
+*.DotSettings.user
+
+# NuGet and package caches
+.nuget/
+packages/
+*.nupkg
+*.snupkg
+
+# Coverage and logs
+coverage/
+*.coverage
+*.coveragexml
+*.log
+*.lscache
+
+# Generated and local files
+**/*.generated.cs
+**/Generated/
+secrets.json
+appsettings.Development.json
+
+# Releases output
+releases/
+
+# Large workspace/vendor content
+Avalonia-src/

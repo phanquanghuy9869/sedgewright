@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:agents="using:Sedgewright.ViewModels.Agents"
+             mc:Ignorable="d"
+             x:Class="Sedgewright.Views.Agents.AgentDefinitionShellSectionView"
+             x:DataType="agents:AgentDefinitionShellViewModel">
+    <StackPanel Spacing="5">
+        <Button x:Name="ShellConfigurationButton"
+            Classes="editor-action">
+            <StackPanel Orientation="Horizontal"
+                Spacing="6">
+            <TextBlock Text="Working directory"
+                   FontWeight="SemiBold"
+                   FontSize="11" />
+            <TextBlock Text="{Binding ShellSummary}"
+                   FontSize="11"
+                   TextTrimming="CharacterEllipsis"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+            <FlyoutBase.AttachedFlyout>
+                <Flyout Placement="Right"
+                        ShowMode="Standard">
+                    <StackPanel Width="360"
+                                Spacing="10">
+                        <CheckBox Content="Enable shell"
+                                  IsChecked="{Binding IsShellActive, Mode=TwoWay}" />
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Shell configuration"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="Choose how this agent runs shell commands."
+                                       FontSize="10"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Shell executor"
+                                       FontWeight="SemiBold"
+                                       FontSize="11" />
+                            <ComboBox ItemsSource="{Binding ShellExecutors}"
+                                      SelectedItem="{Binding ShellExecutor, Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Shell working directory"
+                                       FontWeight="SemiBold"
+                                       FontSize="11" />
+                            <Grid ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="8">
+                                <TextBox Text="{Binding ShellWorkingDirectory, Mode=TwoWay}"
+                                         PlaceholderText="Working directory" />
+                                <Button Grid.Column="1"
+                                        Content="Browse"
+                                        Command="{Binding BrowseShellWorkingDirectoryCommand}"
+                                        Classes="pill-action"
+                                        VerticalAlignment="Center"
+                                        ToolTip.Tip="Choose a local working directory" />
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+        </Button>
+    </StackPanel>
+</UserControl>

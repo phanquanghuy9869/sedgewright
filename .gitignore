@@ -1,0 +1,87 @@
+# Visual Studio
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+build/
+artifacts/
+TestResults/
+build_tempDebug/
+
+# NuGet
+.nuget/
+# Packages folder (for legacy packages.config)
+packages/
+*.nupkg
+*.snupkg
+
+# Visual Studio cache/options
+*.sln.ide
+*.suo
+*.user
+*.userprefs
+
+# Rider
+.idea/
+*.sln.iml
+
+# JetBrains ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Mono
+*.pidb
+*.lscache
+
+# DotCover
+*.dotCover
+
+# Coverage & test result files
+*.coverage
+*.coveragexml
+.coverage
+coverage/
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Generated files
+*.generated.cs
+Generated/
+
+# Publish output
+publish/
+
+# Releases output
+releases/
+
+# Azure pipelines
+.azure-pipelines/
+
+# Node
+node_modules/
+
+# Local secrets
+secrets.json
+appsettings.Development.json
+
+# VS Code workspace storage
+.history/
+Avalonia-src/
+
+# Agent and workspace tooling
+/.agents/
+/.plan/
+/.playwright-mcp/
+/doc/
