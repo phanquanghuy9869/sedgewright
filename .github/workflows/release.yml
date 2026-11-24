@@ -136,10 +136,11 @@ jobs:
 
           compgen -G "release-assets/win-x64/*Setup.exe" >/dev/null ||
             { echo "::error::Missing Windows setup executable" >&2; exit 1; }
-          test -d "$(find release-assets/osx-x64 -mindepth 1 -maxdepth 1 -type d -name 'Sedgewright.app' -print -quit)" ||
-            { echo "::error::Missing macOS app bundle" >&2; exit 1; }
           compgen -G "release-assets/osx-x64/Sedgewright-Portable.zip" >/dev/null ||
             { echo "::error::Missing macOS ZIP" >&2; exit 1; }
+          unzip -Z1 "release-assets/osx-x64/Sedgewright-Portable.zip" |
+            grep -Eq '(^|/)Sedgewright\.app/Contents/Info\.plist$' ||
+            { echo "::error::Missing Sedgewright.app bundle in macOS ZIP" >&2; exit 1; }
           compgen -G "release-assets/linux-x64/*.AppImage" >/dev/null ||
             { echo "::error::Missing Linux AppImage" >&2; exit 1; }
 
