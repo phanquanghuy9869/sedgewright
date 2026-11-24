@@ -32,7 +32,7 @@ $PackTitle = 'Sedgewright'
 $MainExe = 'Sedgewright.exe'
 $VelopackVersion = '1.2.161'
 $DotNetChannel = '11.0'
-$MinimumSdkMajor = 10
+$MinimumSdkMajor = 11
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $projectPath = Join-Path $repoRoot 'src\Sedgewright\Sedgewright.csproj'
