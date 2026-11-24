@@ -134,7 +134,6 @@ vpk pack \
 
 compgen -G "$RELEASE_DIR/releases.*.json" >/dev/null || die "missing releases.*.json in $RELEASE_DIR"
 compgen -G "$RELEASE_DIR/$PACK_ID-$VERSION*-full.nupkg" >/dev/null || die "missing full $PACK_ID $VERSION package in $RELEASE_DIR"
-[[ -d "$RELEASE_DIR/$PACK_ID.app" ]] || die "missing $PACK_ID.app bundle in $RELEASE_DIR"
 [[ -f "$RELEASE_DIR/$PACK_ID-macOS.zip" ]] || die "missing $PACK_ID-macOS.zip in $RELEASE_DIR"
 
 step 'Release files:'
