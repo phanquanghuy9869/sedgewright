@@ -126,10 +126,34 @@ Sedgewright is an actively developed desktop application. The core composition l
 
 ### Requirements
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download).
+- [.NET 10 SDK](https://dotnet.microsoft.com/download) to build from source. The packaging scripts use an existing .NET 10+ SDK or install .NET 11 locally if needed.
 - A desktop environment. The UI uses Avalonia, and release packages are produced for Windows (`win-x64`), macOS (`osx-x64`), and Linux (`linux-x64`).
 - Credentials for at least one provider, or GitHub Copilot access.
 - Docker, only if an agent uses the Docker shell executor.
+
+### Build installers
+
+The Velopack build scripts publish a self-contained app for the current OS and create install/update packages under `artifacts/releases/<runtime-id>`. Run each script on the OS you want to package:
+
+```powershell
+# Windows (defaults to version 0.0.1 and the host architecture)
+powershell -ExecutionPolicy Bypass -File builds/build.ps1
+powershell -ExecutionPolicy Bypass -File builds/build.ps1 -Version 1.2.0 -RuntimeIdentifier win-x64
+```
+
+```bash
+# macOS
+bash builds/build-macos.sh
+bash builds/build-macos.sh --version 1.2.0 --rid osx-arm64
+
+# Linux
+bash builds/build-linux
+bash builds/build-linux --version 1.2.0 --rid linux-x64
+```
+
+If .NET 10 or newer is not available, a script installs the .NET 11 SDK into the current user's home directory using Microsoft's `dotnet-install` script. If `vpk` is not installed, the script installs the version matching the Velopack package used by the app. No administrator access is required for these per-user installs. The selected runtime's publish and release folders are cleared before each build.
+
+Velopack packaging is host-specific; use the Windows, macOS, and Linux scripts on their corresponding operating systems. Linux produces an AppImage rather than a setup installer. See [Velopack packaging notes](doc/Velopack/README.md) for details.
 
 ### Run from source
 
