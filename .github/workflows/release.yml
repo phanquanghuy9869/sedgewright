@@ -154,12 +154,50 @@ jobs:
             filenames["${filename}"]=1
           done < <(find release-assets -type f -print0)
 
+      - name: Generate release notes with download links
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+            -f tag_name="${RELEASE_TAG}" \
+            -f target_commitish="${GITHUB_SHA}" \
+            --jq .body > release-notes.md
+
+          windows_asset="$(find release-assets/win-x64 -maxdepth 1 -type f -name '*Setup.exe' -print -quit)"
+          macos_asset="$(find release-assets/osx-x64 -maxdepth 1 -type f -name 'Sedgewright-osx-Portable.zip' -print -quit)"
+          linux_asset="$(find release-assets/linux-x64 -maxdepth 1 -type f -name '*.AppImage' -print -quit)"
+
+          for asset in "$windows_asset" "$macos_asset" "$linux_asset"; do
+            if [[ -z "$asset" ]]; then
+              echo "::error::Unable to find a platform download asset" >&2
+              exit 1
+            fi
+          done
+
+          asset_url() {
+            local asset_name
+            asset_name="$(basename "$1")"
+            printf 'https://github.com/%s/releases/download/%s/%s' \
+              "${GITHUB_REPOSITORY}" "${RELEASE_TAG}" "$(jq -rn --arg asset "$asset_name" '$asset | @uri')"
+          }
+
+          {
+            printf '\n\n## Downloads\n\n'
+            printf -- '- [Download for Windows](%s)\n' "$(asset_url "$windows_asset")"
+            printf -- '- [Download for macOS](%s)\n' "$(asset_url "$macos_asset")"
+            printf -- '- [Download for Linux](%s)\n' "$(asset_url "$linux_asset")"
+          } >> release-notes.md
+
       - name: Publish release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           name: Sedgewright ${{ needs.prepare.outputs.version }}
-          generate_release_notes: true
+          body_path: release-notes.md
           fail_on_unmatched_files: true
           files: |
             release-assets/**/*
