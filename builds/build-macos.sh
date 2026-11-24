@@ -134,8 +134,8 @@ vpk pack \
 
 compgen -G "$RELEASE_DIR/releases.*.json" >/dev/null || die "missing releases.*.json in $RELEASE_DIR"
 compgen -G "$RELEASE_DIR/$PACK_ID-$VERSION*-full.nupkg" >/dev/null || die "missing full $PACK_ID $VERSION package in $RELEASE_DIR"
-APP_ZIP="$RELEASE_DIR/$PACK_ID-Portable.zip"
-[[ -f "$APP_ZIP" ]] || die "missing $PACK_ID-Portable.zip in $RELEASE_DIR"
+APP_ZIP="$RELEASE_DIR/$PACK_ID-osx-Portable.zip"
+[[ -f "$APP_ZIP" ]] || die "missing $PACK_ID-osx-Portable.zip in $RELEASE_DIR"
 unzip -Z1 "$APP_ZIP" | grep -Eq "(^|/)${PACK_ID}\\.app/Contents/Info\\.plist$" ||
     die "missing $PACK_ID.app bundle in $APP_ZIP"
 
