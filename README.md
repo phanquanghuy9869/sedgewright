@@ -151,9 +151,9 @@ bash builds/build-linux
 bash builds/build-linux --version 1.2.0 --rid linux-x64
 ```
 
-If .NET 10 or newer is not available, a script installs the .NET 11 SDK into the current user's home directory using Microsoft's `dotnet-install` script. If `vpk` is not installed, the script installs the version matching the Velopack package used by the app. No administrator access is required for these per-user installs. The selected runtime's publish and release folders are cleared before each build.
+If .NET 10 or newer is not available, a script installs the .NET 11 SDK into the current user's home directory using Microsoft's [`dotnet-install` script](https://learn.microsoft.com/dotnet/core/tools/dotnet-install-script). The scripts install or update the global `vpk` tool to version 1.2.161 to match the Velopack package used by the app. No administrator access is required for these per-user installs. The selected runtime's publish and release folders are cleared before each build.
 
-Velopack packaging is host-specific; use the Windows, macOS, and Linux scripts on their corresponding operating systems. Linux produces an AppImage rather than a setup installer. See [Velopack packaging notes](doc/Velopack/README.md) for details.
+Velopack packaging is host-specific; use the Windows, macOS, and Linux scripts on their corresponding operating systems. Windows produces a setup executable, macOS an app bundle and ZIP, and Linux an AppImage rather than a setup installer. See the [Velopack packaging overview](https://docs.velopack.io/packaging/overview) for release-file details.
 
 ### Run from source
 
