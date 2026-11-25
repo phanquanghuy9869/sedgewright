@@ -50,6 +50,10 @@ public sealed class SedgewrightDbContext(DbContextOptions<SedgewrightDbContext> 
 
     public DbSet<ApplicationSettings> ApplicationSettings => Set<ApplicationSettings>();
 
+    public DbSet<ScheduledJob> ScheduledJobs => Set<ScheduledJob>();
+
+    public DbSet<ScheduledJobRun> ScheduledJobRuns => Set<ScheduledJobRun>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SedgewrightDbContext).Assembly);

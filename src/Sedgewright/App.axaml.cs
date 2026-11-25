@@ -6,13 +6,17 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Quartz;
+using Sedgewright.Infras.Quartz;
 using Sedgewright.Infras.Storage;
 using Sedgewright.Apps.Abstractions;
 using Sedgewright.Apps.UseCases;
 using Sedgewright.Entities;
+using Sedgewright.Models;
 using Sedgewright.ViewModels.Agents;
 using Sedgewright.ViewModels.Chat;
 using Sedgewright.ViewModels.FirstRun;
@@ -31,6 +35,7 @@ namespace Sedgewright;
 public partial class App : Avalonia.Application
 {
     private ServiceProvider? _services;
+    private IScheduler? _scheduler;
 
     public override void Initialize()
     {
@@ -44,6 +49,7 @@ public partial class App : Avalonia.Application
         logger.LogInformation("Sedgewright desktop application starting.");
         await _services.GetRequiredService<SedgewrightDbContext>().Database.MigrateAsync();
         await _services.GetRequiredService<IEnvironmentSetup>().InitializeAsync();
+        await StartSchedulerAsync(_services, logger);
         ISharedState sharedState = _services.GetRequiredService<ISharedState>();
         await sharedState.RefreshApplicationSettingsAsync();
         RequestedThemeVariant = sharedState.ApplicationSettings?.ThemeMode is ThemeMode.Dark
@@ -81,6 +87,7 @@ public partial class App : Avalonia.Application
         ServiceCollection services = new();
         SedgewrightTelemetry.Configure(services);
         services.AddSedgewrightStorage();
+        services.AddSedgewrightScheduling();
         services.AddSingleton(new HttpClient());
         services.AddSingleton<IUpdateService, UpdateService>();
         services.AddSingleton<MainWindowViewModel>();
@@ -141,11 +148,50 @@ public partial class App : Avalonia.Application
         };
     }
 
+    private async Task StartSchedulerAsync(ServiceProvider services, ILogger<App> logger)
+    {
+        try
+        {
+            IScheduler scheduler = await services.GetRequiredService<ISchedulerFactory>().GetScheduler();
+            await scheduler.Start();
+            _scheduler = scheduler;
+
+            await using AsyncServiceScope scope = services.CreateAsyncScope();
+            UnitResult<IApplicationError> reconcileResult = await scope.ServiceProvider
+                .GetRequiredService<ScheduledJobUseCases>()
+                .ReconcileAsync();
+            if (reconcileResult.IsFailure)
+            {
+                logger.LogWarning("Scheduled jobs were only partially restored: {Errors}", reconcileResult.Error.Messages);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "The job scheduler could not be started; scheduled jobs will not run.");
+        }
+    }
+
     private async void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
     {
         if (_services is null)
         {
             return;
+        }
+
+        if (_scheduler is not null)
+        {
+            try
+            {
+                // Cancel running jobs so they record a Cancelled outcome instead of holding up shutdown.
+                await _services.GetRequiredService<IScheduledJobScheduler>().InterruptAllAsync();
+                await _scheduler.Shutdown(waitForJobsToComplete: true);
+            }
+            catch (Exception exception)
+            {
+                _services.GetRequiredService<ILogger<App>>().LogError(exception, "The job scheduler did not shut down cleanly.");
+            }
+
+            _scheduler = null;
         }
 
         await _services.DisposeAsync();

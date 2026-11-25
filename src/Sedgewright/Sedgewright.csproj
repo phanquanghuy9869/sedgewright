@@ -44,6 +44,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.20.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.20.0" />
     <PackageReference Include="ProMarkdown" Version="0.1.2" />
+    <PackageReference Include="Quartz" Version="4.8.1" />
     <PackageReference Include="Velopack" Version="1.2.161" />
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.7" />
   </ItemGroup>

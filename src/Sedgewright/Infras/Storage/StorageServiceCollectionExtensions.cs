@@ -29,18 +29,21 @@ public static class StorageServiceCollectionExtensions
         {
             options.UseSqlite($"Data Source={databasePath}");
         });
-        services.AddSingleton<LLMProviderRepository>();
-        services.AddSingleton<IApplicationSettingsRepository, ApplicationSettingsRepository>();
-        services.AddSingleton<IAgentDefinitionRepository, AgentDefinitionRepository>();
-        services.AddSingleton<IAgentSessionRepository, AgentSessionRepository>();
-        services.AddSingleton<IMcpDefinitionRepository, McpDefinitionRepository>();
-        services.AddSingleton<ISequentialOrchestrationRepository, SequentialOrchestrationRepository>();
-        services.AddSingleton<IConcurrentOrchestrationRepository, ConcurrentOrchestrationRepository>();
-        services.AddSingleton<IGroupChatOrchestrationRepository, GroupChatOrchestrationRepository>();
-        services.AddSingleton<IMagenticOrchestrationRepository, MagenticOrchestrationRepository>();
-        services.AddSingleton<IHandoffOrchestrationRepository, HandoffOrchestrationRepository>();
-        services.AddSingleton<IToolDefinitionRepository, ToolDefinitionRepository>();
-        services.AddSingleton<IOrchestrationQueryRepository, OrchestrationQueryRepository>();
+        // Repositories are scoped so each Quartz fire (which opens its own DI scope) gets a fresh
+        // SedgewrightDbContext. UI singletons still resolve them from the root provider.
+        services.AddScoped<LLMProviderRepository>();
+        services.AddScoped<IApplicationSettingsRepository, ApplicationSettingsRepository>();
+        services.AddScoped<IAgentDefinitionRepository, AgentDefinitionRepository>();
+        services.AddScoped<IAgentSessionRepository, AgentSessionRepository>();
+        services.AddScoped<IMcpDefinitionRepository, McpDefinitionRepository>();
+        services.AddScoped<ISequentialOrchestrationRepository, SequentialOrchestrationRepository>();
+        services.AddScoped<IConcurrentOrchestrationRepository, ConcurrentOrchestrationRepository>();
+        services.AddScoped<IGroupChatOrchestrationRepository, GroupChatOrchestrationRepository>();
+        services.AddScoped<IMagenticOrchestrationRepository, MagenticOrchestrationRepository>();
+        services.AddScoped<IHandoffOrchestrationRepository, HandoffOrchestrationRepository>();
+        services.AddScoped<IToolDefinitionRepository, ToolDefinitionRepository>();
+        services.AddScoped<IOrchestrationQueryRepository, OrchestrationQueryRepository>();
+        services.AddScoped<IScheduledJobRepository, ScheduledJobRepository>();
         services.AddSingleton<ISharedState, SharedState>();
         services.AddSingleton<IAgentChatExecutionStrategy, AgentChatExecutionStrategy>();
         services.AddSingleton<AgentChatUseCases>();
