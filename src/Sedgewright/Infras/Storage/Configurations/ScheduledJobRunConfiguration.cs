@@ -14,7 +14,7 @@ public sealed class ScheduledJobRunConfiguration : IEntityTypeConfiguration<Sche
         entity.ToTable("ScheduledJobRuns");
         entity.HasKey(run => run.Id);
         entity.Property(run => run.Id).ValueGeneratedOnAdd();
-        entity.Property(run => run.StartedAtUtc).IsRequired();
+        entity.Property(run => run.StartedAt).IsRequired();
         entity.Property(run => run.Status)
             .HasConversion<string>()
             .IsRequired()
@@ -25,7 +25,7 @@ public sealed class ScheduledJobRunConfiguration : IEntityTypeConfiguration<Sche
             .HasForeignKey(run => run.AgentSessionRecordId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        entity.HasIndex(run => new { run.ScheduledJobId, run.StartedAtUtc });
+        entity.HasIndex(run => new { run.ScheduledJobId, run.StartedAt });
         entity.HasIndex(run => run.Status);
     }
 }

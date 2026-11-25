@@ -42,22 +42,22 @@ public sealed class ScheduledJob
     /// </summary>
     public string? TimeZoneId { get; set; }
 
-    public DateTime? RunAtUtc { get; set; }
+    public DateTimeOffset? RunAt { get; set; }
 
     /// <summary>
     /// Gets or sets the earliest time the job may fire. For interval jobs it is also the alignment anchor.
     /// </summary>
-    public DateTime? StartAtUtc { get; set; }
+    public DateTimeOffset? StartAt { get; set; }
 
-    public DateTime? EndAtUtc { get; set; }
+    public DateTimeOffset? EndAt { get; set; }
 
     public bool IsEnabled { get; set; } = true;
 
-    public DateTime CreatedAtUtc { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
-    public DateTime UpdatedAtUtc { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
-    public DateTime? LastRunAtUtc { get; set; }
+    public DateTimeOffset? LastRunAt { get; set; }
 
     public ScheduledJobRunStatus? LastRunStatus { get; set; }
 
@@ -108,7 +108,7 @@ public sealed class ScheduledJob
 
                 break;
             case ScheduleKind.Once:
-                if (RunAtUtc is null)
+                if (RunAt is null)
                 {
                     errors.Add("Run time is required for a one-time job.");
                 }
@@ -119,7 +119,7 @@ public sealed class ScheduledJob
                 break;
         }
 
-        if (StartAtUtc is DateTime start && EndAtUtc is DateTime end && end <= start)
+        if (StartAt is DateTimeOffset start && EndAt is DateTimeOffset end && end <= start)
         {
             errors.Add("End time must be after start time.");
         }

@@ -81,7 +81,7 @@ internal sealed class SchedulingTestHost : IAsyncDisposable
         => InScopeAsync(async services =>
         {
             SedgewrightDbContext dbContext = services.GetRequiredService<SedgewrightDbContext>();
-            DateTime now = DateTime.UtcNow;
+            DateTimeOffset now = DateTimeOffset.UtcNow;
             ScheduledJob job = new()
             {
                 Name = "Nightly report",
@@ -90,8 +90,8 @@ internal sealed class SchedulingTestHost : IAsyncDisposable
                 TargetId = 999,
                 ScheduleKind = ScheduleKind.Interval,
                 IntervalSeconds = 3600,
-                CreatedAtUtc = now,
-                UpdatedAtUtc = now,
+                CreatedAt = now,
+                UpdatedAt = now,
             };
             configure?.Invoke(job);
             dbContext.ScheduledJobs.Add(job);

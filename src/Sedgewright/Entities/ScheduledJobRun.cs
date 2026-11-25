@@ -13,9 +13,9 @@ public sealed class ScheduledJobRun
 
     public ScheduledJob ScheduledJob { get; set; } = null!;
 
-    public DateTime StartedAtUtc { get; set; }
+    public DateTimeOffset StartedAt { get; set; }
 
-    public DateTime? CompletedAtUtc { get; set; }
+    public DateTimeOffset? CompletedAt { get; set; }
 
     public ScheduledJobRunStatus Status { get; set; } = ScheduledJobRunStatus.Running;
 

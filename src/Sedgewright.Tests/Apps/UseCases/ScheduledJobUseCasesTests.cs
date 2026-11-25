@@ -31,7 +31,7 @@ public sealed class ScheduledJobUseCasesTests
             draft.ScheduleKind = kind;
             draft.IntervalSeconds = intervalSeconds;
             draft.CronExpression = cron;
-            draft.RunAtUtc = runAtOffsetMinutes is int offset ? DateTime.UtcNow.AddMinutes(offset) : null;
+            draft.RunAt = runAtOffsetMinutes is int offset ? DateTimeOffset.UtcNow.AddMinutes(offset) : null;
         });
 
         Result<ScheduledJob, IApplicationError> result = await CreateAsync(host, draft);
@@ -93,7 +93,7 @@ public sealed class ScheduledJobUseCasesTests
         await host.InScopeAsync(async services =>
         {
             IScheduledJobRepository repository = services.GetRequiredService<IScheduledJobRepository>();
-            repository.CreateRun(new ScheduledJobRun { ScheduledJobId = enabled.Id, StartedAtUtc = DateTime.UtcNow });
+            repository.CreateRun(new ScheduledJobRun { ScheduledJobId = enabled.Id, StartedAt = DateTimeOffset.UtcNow });
             return await repository.SaveChangesAsync();
         });
         IScheduler scheduler = await host.GetSchedulerAsync();
@@ -128,7 +128,7 @@ public sealed class ScheduledJobUseCasesTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Value!.Status, Is.EqualTo(ScheduledJobRunStatus.Failed));
-            Assert.That(result.Value.CompletedAtUtc, Is.Not.Null);
+            Assert.That(result.Value.CompletedAt, Is.Not.Null);
             Assert.That(stored.IsEnabled, Is.False);
             Assert.That(stored.LastRunStatus, Is.EqualTo(ScheduledJobRunStatus.Failed));
             Assert.That(await IsScheduledAsync(scheduler, job.Id), Is.False);

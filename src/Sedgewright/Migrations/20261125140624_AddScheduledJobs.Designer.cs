@@ -11,8 +11,8 @@ using Sedgewright.Infras.Storage;
 namespace Sedgewright.Migrations;
 
 [DbContext(typeof(SedgewrightDbContext))]
-[Migration("20261125012727_AddScheduledJobs")]
-partial class _20261125012727_AddScheduledJobs
+[Migration("20261125140624_AddScheduledJobs")]
+partial class _20261125140624_AddScheduledJobs
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -482,7 +482,7 @@ partial class _20261125012727_AddScheduledJobs
                     .ValueGeneratedOnAdd()
                     .HasColumnType("INTEGER");
 
-                b.Property<DateTime>("CreatedAtUtc")
+                b.Property<DateTimeOffset>("CreatedAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("CronExpression")
@@ -493,7 +493,7 @@ partial class _20261125012727_AddScheduledJobs
                     .HasMaxLength(2000)
                     .HasColumnType("TEXT");
 
-                b.Property<DateTime?>("EndAtUtc")
+                b.Property<DateTimeOffset?>("EndAt")
                     .HasColumnType("TEXT");
 
                 b.Property<int?>("IntervalSeconds")
@@ -502,7 +502,7 @@ partial class _20261125012727_AddScheduledJobs
                 b.Property<bool>("IsEnabled")
                     .HasColumnType("INTEGER");
 
-                b.Property<DateTime?>("LastRunAtUtc")
+                b.Property<DateTimeOffset?>("LastRunAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("LastRunStatus")
@@ -518,7 +518,7 @@ partial class _20261125012727_AddScheduledJobs
                     .IsRequired()
                     .HasColumnType("TEXT");
 
-                b.Property<DateTime?>("RunAtUtc")
+                b.Property<DateTimeOffset?>("RunAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("ScheduleKind")
@@ -526,7 +526,7 @@ partial class _20261125012727_AddScheduledJobs
                     .HasMaxLength(16)
                     .HasColumnType("TEXT");
 
-                b.Property<DateTime?>("StartAtUtc")
+                b.Property<DateTimeOffset?>("StartAt")
                     .HasColumnType("TEXT");
 
                 b.Property<int>("TargetId")
@@ -541,7 +541,7 @@ partial class _20261125012727_AddScheduledJobs
                     .HasMaxLength(128)
                     .HasColumnType("TEXT");
 
-                b.Property<DateTime>("UpdatedAtUtc")
+                b.Property<DateTimeOffset>("UpdatedAt")
                     .HasColumnType("TEXT");
 
                 b.HasKey("Id");
@@ -562,7 +562,7 @@ partial class _20261125012727_AddScheduledJobs
                 b.Property<int?>("AgentSessionRecordId")
                     .HasColumnType("INTEGER");
 
-                b.Property<DateTime?>("CompletedAtUtc")
+                b.Property<DateTimeOffset?>("CompletedAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("Error")
@@ -574,7 +574,7 @@ partial class _20261125012727_AddScheduledJobs
                 b.Property<int>("ScheduledJobId")
                     .HasColumnType("INTEGER");
 
-                b.Property<DateTime>("StartedAtUtc")
+                b.Property<DateTimeOffset>("StartedAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("Status")
@@ -588,7 +588,7 @@ partial class _20261125012727_AddScheduledJobs
 
                 b.HasIndex("Status");
 
-                b.HasIndex("ScheduledJobId", "StartedAtUtc");
+                b.HasIndex("ScheduledJobId", "StartedAt");
 
                 b.ToTable("ScheduledJobRuns");
             });

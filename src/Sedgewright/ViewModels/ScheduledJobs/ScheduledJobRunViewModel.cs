@@ -19,14 +19,14 @@ public sealed class ScheduledJobRunViewModel(ScheduledJobRun run)
     public string StatusText => Status.ToString();
 
     /// <summary>
-    /// Gets the UTC start time.
+    /// Gets the start time.
     /// </summary>
-    public DateTime StartedAtUtc { get; } = run.StartedAtUtc;
+    public DateTimeOffset StartedAt { get; } = run.StartedAt;
 
     /// <summary>
-    /// Gets the UTC completion time.
+    /// Gets the completion time.
     /// </summary>
-    public DateTime? CompletedAtUtc { get; } = run.CompletedAtUtc;
+    public DateTimeOffset? CompletedAt { get; } = run.CompletedAt;
 
     /// <summary>
     /// Gets the duration text.
@@ -35,12 +35,12 @@ public sealed class ScheduledJobRunViewModel(ScheduledJobRun run)
     {
         get
         {
-            if (CompletedAtUtc is not DateTime completed)
+            if (CompletedAt is not DateTimeOffset completed)
             {
                 return "In progress";
             }
 
-            TimeSpan duration = completed - StartedAtUtc;
+            TimeSpan duration = completed - StartedAt;
             return duration.TotalSeconds < 60
                 ? $"{Math.Max(0, (int)duration.TotalSeconds)}s"
                 : $"{duration:mm\\:ss}";

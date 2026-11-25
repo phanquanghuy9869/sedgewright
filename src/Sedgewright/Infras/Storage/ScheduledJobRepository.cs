@@ -36,14 +36,20 @@ public sealed class ScheduledJobRepository(SedgewrightDbContext dbContext) : ISc
         => _dbContext.ScheduledJobs.FirstOrDefaultAsync(job => job.Id == id, cancellationToken);
 
     /// <inheritdoc />
-    public Task<List<ScheduledJobRun>> GetRunsAsync(int scheduledJobId, int take, CancellationToken cancellationToken = default)
-        => _dbContext.ScheduledJobRuns
+    public async Task<List<ScheduledJobRun>> GetRunsAsync(int scheduledJobId, int take, CancellationToken cancellationToken = default)
+    {
+        // SQLite cannot translate DateTimeOffset in ORDER BY, so the ordering is applied after loading.
+        List<ScheduledJobRun> runs = await _dbContext.ScheduledJobRuns
             .AsNoTracking()
             .Where(run => run.ScheduledJobId == scheduledJobId)
-            .OrderByDescending(run => run.StartedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return runs
+            .OrderByDescending(run => run.StartedAt)
             .ThenByDescending(run => run.Id)
             .Take(take)
-            .ToListAsync(cancellationToken);
+            .ToList();
+    }
 
     /// <inheritdoc />
     public void Create(ScheduledJob job)
@@ -64,13 +70,13 @@ public sealed class ScheduledJobRepository(SedgewrightDbContext dbContext) : ISc
     /// <inheritdoc />
     public Task<int> MarkRunningRunsAbandonedAsync(CancellationToken cancellationToken = default)
     {
-        DateTime now = DateTime.UtcNow;
+        DateTimeOffset now = DateTimeOffset.UtcNow;
         return _dbContext.ScheduledJobRuns
             .Where(run => run.Status == ScheduledJobRunStatus.Running)
             .ExecuteUpdateAsync(
                 setters => setters
                     .SetProperty(run => run.Status, ScheduledJobRunStatus.Abandoned)
-                    .SetProperty(run => run.CompletedAtUtc, now)
+                    .SetProperty(run => run.CompletedAt, now)
                     .SetProperty(run => run.Error, "The application stopped before this run completed."),
                 cancellationToken);
     }

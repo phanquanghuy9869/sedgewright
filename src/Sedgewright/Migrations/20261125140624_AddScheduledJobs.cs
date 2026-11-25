@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Sedgewright.Migrations;
 
 /// <inheritdoc />
-public partial class _20261125012727_AddScheduledJobs : Migration
+public partial class _20261125140624_AddScheduledJobs : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,13 +26,13 @@ public partial class _20261125012727_AddScheduledJobs : Migration
                 IntervalSeconds = table.Column<int>(type: "INTEGER", nullable: true),
                 CronExpression = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                 TimeZoneId = table.Column<string>(type: "TEXT", maxLength: 128, nullable: true),
-                RunAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
-                StartAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
-                EndAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                RunAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
+                StartAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
+                EndAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                 IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
-                UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
-                LastRunAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                CreatedAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                UpdatedAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                LastRunAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                 LastRunStatus = table.Column<string>(type: "TEXT", maxLength: 16, nullable: true)
             },
             constraints: table =>
@@ -47,8 +47,8 @@ public partial class _20261125012727_AddScheduledJobs : Migration
                 Id = table.Column<int>(type: "INTEGER", nullable: false)
                     .Annotation("Sqlite:Autoincrement", true),
                 ScheduledJobId = table.Column<int>(type: "INTEGER", nullable: false),
-                StartedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
-                CompletedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                StartedAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                CompletedAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                 Status = table.Column<string>(type: "TEXT", maxLength: 16, nullable: false),
                 Output = table.Column<string>(type: "TEXT", nullable: true),
                 Error = table.Column<string>(type: "TEXT", nullable: true),
@@ -77,9 +77,9 @@ public partial class _20261125012727_AddScheduledJobs : Migration
             column: "AgentSessionRecordId");
 
         migrationBuilder.CreateIndex(
-            name: "IX_ScheduledJobRuns_ScheduledJobId_StartedAtUtc",
+            name: "IX_ScheduledJobRuns_ScheduledJobId_StartedAt",
             table: "ScheduledJobRuns",
-            columns: new[] { "ScheduledJobId", "StartedAtUtc" });
+            columns: new[] { "ScheduledJobId", "StartedAt" });
 
         migrationBuilder.CreateIndex(
             name: "IX_ScheduledJobRuns_Status",

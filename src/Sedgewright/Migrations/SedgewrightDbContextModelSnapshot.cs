@@ -15,7 +15,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261125012727_AddScheduledJobs";
+    public override string LastMigrationId => "20261125140624_AddScheduledJobs";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -484,7 +484,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
                     .ValueGeneratedOnAdd()
                     .HasColumnType("INTEGER");
 
-                b.Property<DateTime>("CreatedAtUtc")
+                b.Property<DateTimeOffset>("CreatedAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("CronExpression")
@@ -495,7 +495,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
                     .HasMaxLength(2000)
                     .HasColumnType("TEXT");
 
-                b.Property<DateTime?>("EndAtUtc")
+                b.Property<DateTimeOffset?>("EndAt")
                     .HasColumnType("TEXT");
 
                 b.Property<int?>("IntervalSeconds")
@@ -504,7 +504,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
                 b.Property<bool>("IsEnabled")
                     .HasColumnType("INTEGER");
 
-                b.Property<DateTime?>("LastRunAtUtc")
+                b.Property<DateTimeOffset?>("LastRunAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("LastRunStatus")
@@ -520,7 +520,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("TEXT");
 
-                b.Property<DateTime?>("RunAtUtc")
+                b.Property<DateTimeOffset?>("RunAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("ScheduleKind")
@@ -528,7 +528,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
                     .HasMaxLength(16)
                     .HasColumnType("TEXT");
 
-                b.Property<DateTime?>("StartAtUtc")
+                b.Property<DateTimeOffset?>("StartAt")
                     .HasColumnType("TEXT");
 
                 b.Property<int>("TargetId")
@@ -543,7 +543,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
                     .HasMaxLength(128)
                     .HasColumnType("TEXT");
 
-                b.Property<DateTime>("UpdatedAtUtc")
+                b.Property<DateTimeOffset>("UpdatedAt")
                     .HasColumnType("TEXT");
 
                 b.HasKey("Id");
@@ -564,7 +564,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
                 b.Property<int?>("AgentSessionRecordId")
                     .HasColumnType("INTEGER");
 
-                b.Property<DateTime?>("CompletedAtUtc")
+                b.Property<DateTimeOffset?>("CompletedAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("Error")
@@ -576,7 +576,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
                 b.Property<int>("ScheduledJobId")
                     .HasColumnType("INTEGER");
 
-                b.Property<DateTime>("StartedAtUtc")
+                b.Property<DateTimeOffset>("StartedAt")
                     .HasColumnType("TEXT");
 
                 b.Property<string>("Status")
@@ -590,7 +590,7 @@ partial class SedgewrightDbContextModelSnapshot : ModelSnapshot
 
                 b.HasIndex("Status");
 
-                b.HasIndex("ScheduledJobId", "StartedAtUtc");
+                b.HasIndex("ScheduledJobId", "StartedAt");
 
                 b.ToTable("ScheduledJobRuns");
             });

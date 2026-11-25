@@ -94,7 +94,7 @@ public sealed class ScheduledJobListItemViewModel : ViewModelBase
     {
         ScheduleKind.Interval => $"Every {(Job.IntervalSeconds ?? 0) / 60} min",
         ScheduleKind.Cron => $"Cron  {Job.CronExpression}",
-        ScheduleKind.Once => $"Once  {FormatUtc(Job.RunAtUtc)}",
+        ScheduleKind.Once => $"Once  {FormatLocal(Job.RunAt)}",
         _ => Job.ScheduleKind.ToString(),
     };
 
@@ -125,7 +125,7 @@ public sealed class ScheduledJobListItemViewModel : ViewModelBase
     /// <summary>
     /// Gets the last run label.
     /// </summary>
-    public string LastRunText => Job.LastRunAtUtc is DateTime last
+    public string LastRunText => Job.LastRunAt is DateTimeOffset last
         ? $"{Job.LastRunStatus?.ToString() ?? "Unknown"}  {last.ToLocalTime():MM-dd HH:mm}"
         : "Never run";
 
@@ -193,8 +193,8 @@ public sealed class ScheduledJobListItemViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasNoRuns));
     }
 
-    private static string FormatUtc(DateTime? value)
-        => value is DateTime date
+    private static string FormatLocal(DateTimeOffset? value)
+        => value is DateTimeOffset date
             ? date.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
             : "Not set";
 }

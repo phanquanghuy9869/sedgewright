@@ -46,7 +46,7 @@ public sealed class ScheduledJobRunner(
         ScheduledJobRun run = new()
         {
             ScheduledJobId = job.Id,
-            StartedAtUtc = UtcNow(),
+            StartedAt = timeProvider.GetUtcNow(),
             Status = ScheduledJobRunStatus.Running,
         };
 
@@ -99,12 +99,12 @@ public sealed class ScheduledJobRunner(
             Complete(run, ScheduledJobRunStatus.Failed, error: exception.Message);
         }
 
-        job.LastRunAtUtc = run.StartedAtUtc;
+        job.LastRunAt = run.StartedAt;
         job.LastRunStatus = run.Status;
         if (targetMissing)
         {
             job.IsEnabled = false;
-            job.UpdatedAtUtc = UtcNow();
+            job.UpdatedAt = timeProvider.GetUtcNow();
         }
 
         try
@@ -182,7 +182,7 @@ public sealed class ScheduledJobRunner(
         JsonElement serializedSession = await runtime.Agent
             .SerializeSessionAsync(runtime.AgentSession, cancellationToken: CancellationToken.None)
             .ConfigureAwait(false);
-        DateTime now = UtcNow();
+        DateTime now = timeProvider.GetUtcNow().UtcDateTime;
         AgentSessionRecord sessionRecord = new()
         {
             AgentDefinitionId = agentDefinition.Id,
@@ -242,12 +242,10 @@ public sealed class ScheduledJobRunner(
     private void Complete(ScheduledJobRun run, ScheduledJobRunStatus status, string? output = null, string? error = null)
     {
         run.Status = status;
-        run.CompletedAtUtc = UtcNow();
+        run.CompletedAt = timeProvider.GetUtcNow();
         run.Output = output;
         run.Error = error;
     }
-
-    private DateTime UtcNow() => timeProvider.GetUtcNow().UtcDateTime;
 
     private static string Truncate(string value, int maxLength)
         => value.Length <= maxLength ? value : value[..maxLength];

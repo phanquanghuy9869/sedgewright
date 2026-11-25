@@ -15,7 +15,7 @@ public sealed class ScheduledJobRepositoryTests
     {
         await using SchedulingTestHost host = await SchedulingTestHost.CreateAsync();
         ScheduledJob job = await host.InsertJobAsync();
-        DateTime start = new(2026, 11, 25, 0, 0, 0, DateTimeKind.Utc);
+        DateTimeOffset start = new(2026, 11, 25, 0, 0, 0, TimeSpan.Zero);
         await host.InScopeAsync(async services =>
         {
             IScheduledJobRepository repository = services.GetRequiredService<IScheduledJobRepository>();
@@ -24,7 +24,7 @@ public sealed class ScheduledJobRepositoryTests
                 repository.CreateRun(new ScheduledJobRun
                 {
                     ScheduledJobId = job.Id,
-                    StartedAtUtc = start.AddHours(index),
+                    StartedAt = start.AddHours(index),
                     Status = ScheduledJobRunStatus.Succeeded,
                 });
             }
@@ -35,7 +35,7 @@ public sealed class ScheduledJobRepositoryTests
         List<ScheduledJobRun> runs = await host.InScopeAsync(services =>
             services.GetRequiredService<IScheduledJobRepository>().GetRunsAsync(job.Id, take: 2));
 
-        Assert.That(runs.Select(run => run.StartedAtUtc), Is.EqualTo(new[] { start.AddHours(2), start.AddHours(1) }));
+        Assert.That(runs.Select(run => run.StartedAt), Is.EqualTo(new[] { start.AddHours(2), start.AddHours(1) }));
     }
 
     [Test]
@@ -59,8 +59,8 @@ public sealed class ScheduledJobRepositoryTests
         await host.InScopeAsync(async services =>
         {
             IScheduledJobRepository repository = services.GetRequiredService<IScheduledJobRepository>();
-            repository.CreateRun(new ScheduledJobRun { ScheduledJobId = job.Id, StartedAtUtc = DateTime.UtcNow, Status = ScheduledJobRunStatus.Running });
-            repository.CreateRun(new ScheduledJobRun { ScheduledJobId = job.Id, StartedAtUtc = DateTime.UtcNow, Status = ScheduledJobRunStatus.Succeeded });
+            repository.CreateRun(new ScheduledJobRun { ScheduledJobId = job.Id, StartedAt = DateTimeOffset.UtcNow, Status = ScheduledJobRunStatus.Running });
+            repository.CreateRun(new ScheduledJobRun { ScheduledJobId = job.Id, StartedAt = DateTimeOffset.UtcNow, Status = ScheduledJobRunStatus.Succeeded });
             return await repository.SaveChangesAsync();
         });
 
@@ -84,7 +84,7 @@ public sealed class ScheduledJobRepositoryTests
         await host.InScopeAsync(async services =>
         {
             IScheduledJobRepository repository = services.GetRequiredService<IScheduledJobRepository>();
-            repository.CreateRun(new ScheduledJobRun { ScheduledJobId = job.Id, StartedAtUtc = DateTime.UtcNow });
+            repository.CreateRun(new ScheduledJobRun { ScheduledJobId = job.Id, StartedAt = DateTimeOffset.UtcNow });
             await repository.SaveChangesAsync();
             repository.Delete((await repository.GetAsync(job.Id))!);
             return await repository.SaveChangesAsync();

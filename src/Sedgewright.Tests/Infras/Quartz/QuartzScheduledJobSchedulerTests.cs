@@ -19,7 +19,7 @@ public sealed class QuartzScheduledJobSchedulerTests
         ScheduledJob job = CreateJob(job =>
         {
             job.IntervalSeconds = 15 * 60;
-            job.StartAtUtc = new DateTime(2026, 11, 25, 0, 0, 0, DateTimeKind.Utc);
+            job.StartAt = new DateTimeOffset(2026, 11, 25, 0, 0, 0, TimeSpan.Zero);
         });
 
         ITrigger? trigger = job.BuildTrigger(Now).Value;
@@ -53,8 +53,8 @@ public sealed class QuartzScheduledJobSchedulerTests
         {
             job.ScheduleKind = kind;
             job.CronExpression = "0 0 9 * * ?";
-            job.RunAtUtc = Now.UtcDateTime.AddMinutes(-1);
-            job.EndAtUtc = kind == ScheduleKind.Once ? null : Now.UtcDateTime.AddSeconds(-1);
+            job.RunAt = Now.AddMinutes(-1);
+            job.EndAt = kind == ScheduleKind.Once ? null : Now.AddSeconds(-1);
         });
 
         Result<ITrigger?, IApplicationError> result = job.BuildTrigger(Now);
@@ -135,8 +135,8 @@ public sealed class QuartzScheduledJobSchedulerTests
             TargetId = 1,
             ScheduleKind = ScheduleKind.Interval,
             IntervalSeconds = 300,
-            CreatedAtUtc = Now.UtcDateTime,
-            UpdatedAtUtc = Now.UtcDateTime,
+            CreatedAt = Now,
+            UpdatedAt = Now,
         };
         configure?.Invoke(job);
         return job;

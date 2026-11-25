@@ -50,12 +50,12 @@ public sealed class ScheduledJobUseCases(
         => ValidateAsync(draft, cancellationToken)
             .Map(async () =>
             {
-                DateTime now = UtcNow();
+                DateTimeOffset now = timeProvider.GetUtcNow();
                 ScheduledJob job = new()
                 {
                     Name = draft.Name.Trim(),
-                    CreatedAtUtc = now,
-                    UpdatedAtUtc = now,
+                    CreatedAt = now,
+                    UpdatedAt = now,
                     Prompt = draft.Prompt,
                 };
                 CopySettings(draft, job);
@@ -78,7 +78,7 @@ public sealed class ScheduledJobUseCases(
                 job.Name = draft.Name.Trim();
                 job.Prompt = draft.Prompt;
                 CopySettings(draft, job);
-                job.UpdatedAtUtc = UtcNow();
+                job.UpdatedAt = timeProvider.GetUtcNow();
                 await repository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 return job;
             })
@@ -110,7 +110,7 @@ public sealed class ScheduledJobUseCases(
             .Map(async job =>
             {
                 job.IsEnabled = isEnabled;
-                job.UpdatedAtUtc = UtcNow();
+                job.UpdatedAt = timeProvider.GetUtcNow();
                 await repository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 return job;
             })
@@ -150,7 +150,7 @@ public sealed class ScheduledJobUseCases(
         => draft.IsValidDefinition()
             .Bind(() => scheduler.ValidateSchedule(draft))
             .Ensure(
-                () => !draft.IsEnabled || draft.ScheduleKind != ScheduleKind.Once || ToUtc(draft.RunAtUtc) > UtcNow(),
+                () => !draft.IsEnabled || draft.ScheduleKind != ScheduleKind.Once || draft.RunAt > timeProvider.GetUtcNow(),
                 (IApplicationError)new ValidationError(["Run time for a one-time job must be in the future."]))
             .Bind(() => EnsureTargetExistsAsync(draft, cancellationToken));
 
@@ -195,16 +195,9 @@ public sealed class ScheduledJobUseCases(
         target.TimeZoneId = source.ScheduleKind == ScheduleKind.Cron && !string.IsNullOrWhiteSpace(source.TimeZoneId)
             ? source.TimeZoneId.Trim()
             : null;
-        target.RunAtUtc = source.ScheduleKind == ScheduleKind.Once ? ToUtc(source.RunAtUtc) : null;
-        target.StartAtUtc = ToUtc(source.StartAtUtc);
-        target.EndAtUtc = ToUtc(source.EndAtUtc);
+        target.RunAt = source.ScheduleKind == ScheduleKind.Once ? source.RunAt : null;
+        target.StartAt = source.StartAt;
+        target.EndAt = source.EndAt;
         target.IsEnabled = source.IsEnabled;
     }
-
-    private static DateTime? ToUtc(DateTime? value)
-        => value is DateTime dateTime
-            ? dateTime.Kind == DateTimeKind.Local ? dateTime.ToUniversalTime() : DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)
-            : null;
-
-    private DateTime UtcNow() => timeProvider.GetUtcNow().UtcDateTime;
 }

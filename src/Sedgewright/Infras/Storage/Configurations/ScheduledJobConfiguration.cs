@@ -31,8 +31,8 @@ public sealed class ScheduledJobConfiguration : IEntityTypeConfiguration<Schedul
         entity.Property(job => job.LastRunStatus)
             .HasConversion<string?>()
             .HasMaxLength(16);
-        entity.Property(job => job.CreatedAtUtc).IsRequired();
-        entity.Property(job => job.UpdatedAtUtc).IsRequired();
+        entity.Property(job => job.CreatedAt).IsRequired();
+        entity.Property(job => job.UpdatedAt).IsRequired();
 
         entity.HasMany(job => job.Runs)
             .WithOne(run => run.ScheduledJob)

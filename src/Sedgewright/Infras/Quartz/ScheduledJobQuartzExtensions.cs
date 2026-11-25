@@ -19,7 +19,7 @@ public static class ScheduledJobQuartzExtensions
         /// </summary>
         public Result<ITrigger?, IApplicationError> BuildTrigger(DateTimeOffset now)
         {
-            DateTimeOffset? endAt = ToUtcOffset(job.EndAtUtc);
+            DateTimeOffset? endAt = job.EndAt;
             if (endAt is DateTimeOffset end && end <= now)
             {
                 return Result.Success<ITrigger?, IApplicationError>(null);
@@ -57,8 +57,8 @@ public static class ScheduledJobQuartzExtensions
         }
 
         TimeSpan interval = TimeSpan.FromSeconds(seconds);
-        DateTimeOffset anchor = ToUtcOffset(job.StartAtUtc)
-            ?? (job.CreatedAtUtc == default ? now : ToUtcOffset(job.CreatedAtUtc)!.Value);
+        DateTimeOffset anchor = job.StartAt
+            ?? (job.CreatedAt == default ? now : job.CreatedAt);
         IScheduleBuilder schedule = SimpleScheduleBuilder.Create()
             .WithInterval(interval)
             .RepeatForever()
@@ -77,7 +77,7 @@ public static class ScheduledJobQuartzExtensions
 
         return ResolveTimeZone(job.TimeZoneId).Map(timeZone =>
         {
-            DateTimeOffset startAt = ToUtcOffset(job.StartAtUtc) is DateTimeOffset start && start > now ? start : now;
+            DateTimeOffset startAt = job.StartAt is DateTimeOffset start && start > now ? start : now;
             IScheduleBuilder schedule = CronScheduleBuilder.Create(job.CronExpression!)
                 .InTimeZone(timeZone)
                 .WithMisfireInstruction(CronTriggerMisfireInstruction.DoNothing);
@@ -88,7 +88,7 @@ public static class ScheduledJobQuartzExtensions
     private static Result<(DateTimeOffset StartAt, IScheduleBuilder Schedule), IApplicationError> BuildOnceSchedule(
         ScheduledJob job)
     {
-        if (ToUtcOffset(job.RunAtUtc) is not DateTimeOffset runAt)
+        if (job.RunAt is not DateTimeOffset runAt)
         {
             return new ValidationError(["Run time is required for a one-time job."]);
         }
@@ -130,9 +130,4 @@ public static class ScheduledJobQuartzExtensions
             return new ValidationError([$"Time zone '{timeZoneId}' was not found."]);
         }
     }
-
-    private static DateTimeOffset? ToUtcOffset(DateTime? value)
-        => value is DateTime dateTime
-            ? new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc))
-            : null;
 }

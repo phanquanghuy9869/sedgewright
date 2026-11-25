@@ -16,7 +16,7 @@ public enum ScheduleKind
     Cron = 1,
 
     /// <summary>
-    /// Fires a single time at <see cref="ScheduledJob.RunAtUtc"/>.
+    /// Fires a single time at <see cref="ScheduledJob.RunAt"/>.
     /// </summary>
     Once = 2,
 }
