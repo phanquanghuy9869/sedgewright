@@ -1,0 +1,212 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:scheduled="using:Sedgewright.ViewModels.ScheduledJobs"
+             mc:Ignorable="d"
+             x:Class="Sedgewright.Views.ScheduledJobs.ScheduledJobsView"
+             x:DataType="scheduled:ScheduledJobsViewModel">
+    <UserControl.Styles>
+        <Style Selector="Button.ghost-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+        <Style Selector="Border.job-row">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ListSeparatorBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Padding" Value="10,9" />
+        </Style>
+        <Style Selector="Border.job-row.selected">
+            <Setter Property="Background" Value="{DynamicResource ListRowHoverBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentTintBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="14,10,14,14"
+                    Spacing="12">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12"
+                  VerticalAlignment="Center">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="{Binding TitleText}"
+                               FontSize="18"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding SubtitleText}"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource MutedBrush}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            VerticalAlignment="Center">
+                    <Button Content="Refresh"
+                            Command="{Binding RefreshCommand}"
+                            Classes="ghost-action" />
+                    <Button Content="Add job"
+                            Command="{Binding AddCommand}"
+                            Classes="primary" />
+                </StackPanel>
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding Items}"
+                          IsVisible="{Binding HasItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="scheduled:ScheduledJobListItemViewModel">
+                        <Border Classes="job-row"
+                                Classes.selected="{Binding IsSelected}">
+                            <Grid RowDefinitions="Auto,Auto,Auto"
+                                  ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="12"
+                                  RowSpacing="7">
+                                <Grid ColumnDefinitions="Auto,*,Auto"
+                                      ColumnSpacing="9">
+                                    <Border Width="8"
+                                            Height="8"
+                                            CornerRadius="4"
+                                            VerticalAlignment="Center"
+                                            Background="{DynamicResource AccentBrush}"
+                                            IsVisible="{Binding IsEnabled}" />
+
+                                    <StackPanel Grid.Column="1"
+                                                Spacing="2">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding TargetDisplay}"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource MutedBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2"
+                                                Orientation="Horizontal"
+                                                Spacing="8"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding EnabledText}"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource MutedBrush}"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <StackPanel Grid.Column="1"
+                                            Orientation="Horizontal"
+                                            Spacing="3"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top">
+                                    <Button Content="Run"
+                                            Command="{Binding RunNowCommand}"
+                                            IsEnabled="{Binding IsEnabled}"
+                                            Classes="ghost-action" />
+                                    <Button Content="{Binding ToggleEnabledText}"
+                                            Command="{Binding ToggleEnabledCommand}"
+                                            Classes="ghost-action" />
+                                    <Button Content="Edit"
+                                            Command="{Binding EditCommand}"
+                                            Classes="ghost-action" />
+                                    <Button Content="Delete"
+                                            Command="{Binding DeleteCommand}"
+                                            Classes="ghost-action" />
+                                </StackPanel>
+
+                                <Grid Grid.Row="1"
+                                      Grid.ColumnSpan="2"
+                                      ColumnDefinitions="*,*,*"
+                                      ColumnSpacing="12">
+                                    <Button Grid.Column="0"
+                                            Command="{Binding SelectCommand}"
+                                            Classes="ghost-action"
+                                            HorizontalAlignment="Left"
+                                            Padding="0">
+                                        <TextBlock Text="{Binding ScheduleText}"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource TextBrush}" />
+                                    </Button>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding NextFireText}"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource MutedBrush}" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding LastRunText}"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource MutedBrush}"
+                                               HorizontalAlignment="Right" />
+                                </Grid>
+
+                                <Border Grid.Row="2"
+                                        Grid.ColumnSpan="2"
+                                        BorderBrush="{DynamicResource ListSeparatorBrush}"
+                                        BorderThickness="0,1,0,0"
+                                        Padding="0,8,0,0"
+                                        IsVisible="{Binding IsSelected}">
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="Recent runs"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold" />
+
+                                        <ItemsControl ItemsSource="{Binding Runs}"
+                                                      IsVisible="{Binding HasRuns}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="scheduled:ScheduledJobRunViewModel">
+                                                    <Grid ColumnDefinitions="Auto,*,Auto"
+                                                          ColumnSpacing="10"
+                                                          Margin="0,3">
+                                                        <TextBlock Text="{Binding StatusText}"
+                                                                   FontSize="10"
+                                                                   FontWeight="SemiBold"
+                                                                   MinWidth="72" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding DisplayText}"
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource MutedBrush}"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                        <TextBlock Grid.Column="2"
+                                                                   Text="{Binding DurationText}"
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource MutedBrush}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <TextBlock Text="No runs yet."
+                                                   IsVisible="{Binding HasNoRuns}"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource MutedBrush}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <StackPanel IsVisible="{Binding HasNoItems}"
+                        Spacing="4"
+                        Margin="0,6,0,0">
+                <TextBlock Text="{Binding EmptyStateTitle}"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding EmptyStateText}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource MutedBrush}" />
+            </StackPanel>
+
+            <TextBlock Text="{Binding StatusText}"
+                       IsVisible="{Binding HasStatusText}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource MutedBrush}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

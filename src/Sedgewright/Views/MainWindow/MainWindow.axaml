@@ -8,6 +8,7 @@
         xmlns:mcp="using:Sedgewright.Views.Mcp"
         xmlns:orch="using:Sedgewright.Views.Orchestrations"
         xmlns:settings="using:Sedgewright.Views.Settings"
+        xmlns:schedule="using:Sedgewright.Views.ScheduledJobs"
         xmlns:tools="using:Sedgewright.Views.Tools"
         xmlns:workspace="using:Sedgewright.Views.Workspace"
         xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
@@ -261,6 +262,9 @@
 
         <tools:ToolDefinitionsView DataContext="{Binding ToolDefinitions}"
                                    IsVisible="{Binding DataContext.IsToolDefinitionsSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <schedule:ScheduledJobsView DataContext="{Binding ScheduledJobs}"
+                                    IsVisible="{Binding DataContext.IsScheduledJobsSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
 
         <Border IsVisible="{Binding WorkspaceTree.IsFileOpen}"
                 Background="{DynamicResource SurfaceBrush}"

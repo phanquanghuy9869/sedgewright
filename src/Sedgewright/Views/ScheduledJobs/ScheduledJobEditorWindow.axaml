@@ -1,0 +1,227 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:scheduled="using:Sedgewright.ViewModels.ScheduledJobs"
+        mc:Ignorable="d"
+        x:Class="Sedgewright.Views.ScheduledJobs.ScheduledJobEditorWindow"
+        x:DataType="scheduled:ScheduledJobEditorViewModel"
+        Title="{Binding WindowTitle}"
+        Width="760"
+        Height="720"
+        MinWidth="620"
+        MinHeight="580"
+        WindowStartupLocation="CenterOwner"
+        WindowDecorations="None"
+        Background="{DynamicResource CanvasBrush}">
+    <Window.Styles>
+        <Style Selector="Button.pill-action">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+        <Style Selector="Border.field-surface">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+    </Window.Styles>
+
+    <Border Classes="modal-surface">
+        <Grid Margin="16"
+              RowDefinitions="Auto,*,Auto"
+              RowSpacing="14">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10">
+                <StackPanel x:Name="TitleDragRegion"
+                            Spacing="4">
+                    <TextBlock Text="{Binding WindowTitle}"
+                               FontSize="20"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding SubtitleText}"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource MutedBrush}" />
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="X"
+                        Command="{Binding CancelCommand}"
+                        Classes="pill-action"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top" />
+            </Grid>
+
+            <ScrollViewer Classes="modal-scroll"
+                          Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid Classes="modal-scroll-content"
+                      ColumnDefinitions="*,*"
+                      ColumnSpacing="14"
+                      RowDefinitions="Auto,Auto"
+                      RowSpacing="14">
+                    <StackPanel Spacing="12">
+                        <Border Classes="field-surface">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="JOB"
+                                           Classes="eyebrow" />
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Name"
+                                               FontWeight="SemiBold" />
+                                    <TextBox Text="{Binding Name, Mode=TwoWay}"
+                                             PlaceholderText="Morning report" />
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Description"
+                                               FontWeight="SemiBold" />
+                                    <TextBox Text="{Binding Description, Mode=TwoWay}"
+                                             PlaceholderText="Optional" />
+                                </StackPanel>
+                                <ToggleSwitch IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+                                              OffContent="Paused"
+                                              OnContent="Active"
+                                              HorizontalAlignment="Left" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="field-surface">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="TARGET"
+                                           Classes="eyebrow" />
+                                <ComboBox ItemsSource="{Binding TargetOptions}"
+                                          SelectedItem="{Binding SelectedTarget, Mode=TwoWay}"
+                                          PlaceholderText="Select an agent or orchestration"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate x:DataType="scheduled:ScheduledJobTargetOptionViewModel">
+                                            <TextBlock Text="{Binding DisplayLabel}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                Spacing="12">
+                        <Border Classes="field-surface">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="PROMPT"
+                                           Classes="eyebrow" />
+                                <TextBox Text="{Binding Prompt, Mode=TwoWay}"
+                                         AcceptsReturn="True"
+                                         TextWrapping="Wrap"
+                                         MinHeight="150"
+                                         VerticalContentAlignment="Top"
+                                         PlaceholderText="Write the prompt the target should receive." />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="field-surface">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="SCHEDULE"
+                                           Classes="eyebrow" />
+                                <ComboBox ItemsSource="{Binding ScheduleKindOptions}"
+                                          SelectedItem="{Binding SelectedScheduleKind, Mode=TwoWay}"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate x:DataType="scheduled:ScheduleKindOptionViewModel">
+                                            <TextBlock Text="{Binding Label}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <StackPanel Spacing="6"
+                                            IsVisible="{Binding IsIntervalSchedule}">
+                                    <TextBlock Text="Every"
+                                               FontWeight="SemiBold" />
+                                    <Grid ColumnDefinitions="*,Auto"
+                                          ColumnSpacing="8">
+                                        <TextBox Text="{Binding IntervalMinutes, Mode=TwoWay}"
+                                                 HorizontalAlignment="Stretch" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="minutes"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource MutedBrush}" />
+                                    </Grid>
+                                </StackPanel>
+
+                                <StackPanel Spacing="8"
+                                            IsVisible="{Binding IsCronSchedule}">
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="Cron expression"
+                                                   FontWeight="SemiBold" />
+                                        <TextBox Text="{Binding CronExpression, Mode=TwoWay}"
+                                                 PlaceholderText="0 0 9 * * ?" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="Time zone"
+                                                   FontWeight="SemiBold" />
+                                        <TextBox Text="{Binding TimeZoneId, Mode=TwoWay}"
+                                                 PlaceholderText="UTC" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Spacing="6"
+                                            IsVisible="{Binding IsOnceSchedule}">
+                                    <TextBlock Text="Run at"
+                                               FontWeight="SemiBold" />
+                                    <TextBox Text="{Binding RunAtText, Mode=TwoWay}"
+                                             PlaceholderText="yyyy-MM-dd HH:mm" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <Border Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Classes="field-surface">
+                        <Grid ColumnDefinitions="*,*"
+                              ColumnSpacing="12">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="Start boundary"
+                                           FontWeight="SemiBold" />
+                                <TextBox Text="{Binding StartAtText, Mode=TwoWay}"
+                                         PlaceholderText="Optional: yyyy-MM-dd HH:mm" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1"
+                                        Spacing="6">
+                                <TextBlock Text="End boundary"
+                                           FontWeight="SemiBold" />
+                                <TextBox Text="{Binding EndAtText, Mode=TwoWay}"
+                                         PlaceholderText="Optional: yyyy-MM-dd HH:mm" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+
+            <Grid Grid.Row="2"
+                  ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12">
+                <TextBlock Text="{Binding ValidationText}"
+                           IsVisible="{Binding HasValidationText}"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           Foreground="{DynamicResource SystemControlErrorTextBrush}" />
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                    <Button Content="Cancel"
+                            Command="{Binding CancelCommand}"
+                            Classes="pill-action" />
+                    <Button Content="Save"
+                            Command="{Binding SaveCommand}"
+                            Classes="primary" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

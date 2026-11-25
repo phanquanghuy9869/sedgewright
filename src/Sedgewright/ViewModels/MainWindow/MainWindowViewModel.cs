@@ -5,6 +5,7 @@ using Sedgewright.ViewModels.Agents;
 using Sedgewright.ViewModels.Chat;
 using Sedgewright.ViewModels.Mcp;
 using Sedgewright.ViewModels.Orchestrations;
+using Sedgewright.ViewModels.ScheduledJobs;
 using Sedgewright.ViewModels.Settings;
 using Sedgewright.ViewModels.Tools;
 using Sedgewright.ViewModels.Workspace;
@@ -24,6 +25,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         new("agent-orchestration", "Orchestration", Geometry.Parse("M9 3h6v5H9z M4 16h6v5H4z M14 16h6v5h-6z M12 8v4 M7 12h10 M7 12v4 M17 12v4")),
         new("agent-definitions", "Agents", Geometry.Parse("M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z M4 21a8 8 0 0 1 16 0")),
         new("tool-definitions", "Tools", Geometry.Parse("M21 7.5a5.5 5.5 0 0 1-7.8 5L7 19.7a2.1 2.1 0 0 1-3-3l6.9-6.2a5.5 5.5 0 0 1 5-7.8l-3.4 3.4 2.8 2.8 3.4-3.4A5.5 5.5 0 0 1 21 7.5Z")),
+        new("scheduled-jobs", "Jobs", Geometry.Parse("M12 3a9 9 0 1 0 9 9 M12 7v5l3.5 2 M16.5 3.5v4h-4")),
     ];
 
     private string _selectedSectionKey = Sections[0].Key;
@@ -37,6 +39,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         OrchestrationDefinitionsViewModel orchestrationDefinitions,
         AgentDefinitionsViewModel agentDefinitions,
         ToolDefinitionsViewModel toolDefinitions,
+        ScheduledJobsViewModel scheduledJobs,
         WorkspaceTreePanelViewModel workspaceTree)
     {
         Chat = chat;
@@ -45,6 +48,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         OrchestrationDefinitions = orchestrationDefinitions;
         AgentDefinitions = agentDefinitions;
         ToolDefinitions = toolDefinitions;
+        ScheduledJobs = scheduledJobs;
         WorkspaceTree = workspaceTree;
         SectionsView =
         [
@@ -55,6 +59,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             new ShellSectionViewModel(Sections[4].Key, Sections[4].Title, Sections[4].Icon),
             new ShellSectionViewModel(Sections[5].Key, Sections[5].Title, Sections[5].Icon),
             new ShellSectionViewModel(Sections[6].Key, Sections[6].Title, Sections[6].Icon),
+            new ShellSectionViewModel(Sections[7].Key, Sections[7].Title, Sections[7].Icon),
         ];
         UpdateSectionSelection();
 
@@ -72,6 +77,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     public AgentDefinitionsViewModel AgentDefinitions { get; }
 
     public ToolDefinitionsViewModel ToolDefinitions { get; }
+
+    public ScheduledJobsViewModel ScheduledJobs { get; }
 
     public SettingsViewModel Settings { get; }
 
@@ -98,6 +105,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsAgentOrchestrationSelected));
             OnPropertyChanged(nameof(IsAgentDefinitionsSelected));
             OnPropertyChanged(nameof(IsToolDefinitionsSelected));
+            OnPropertyChanged(nameof(IsScheduledJobsSelected));
         }
     }
 
@@ -116,6 +124,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     public bool IsAgentDefinitionsSelected => SelectedSectionKey == Sections[5].Key;
 
     public bool IsToolDefinitionsSelected => SelectedSectionKey == Sections[6].Key;
+
+    public bool IsScheduledJobsSelected => SelectedSectionKey == Sections[7].Key;
 
     public bool IsRailOpen
     {
@@ -161,7 +171,8 @@ public sealed class MainWindowViewModel : ViewModelBase
             || key == Sections[3].Key
             || key == Sections[4].Key
             || key == Sections[5].Key
-            || key == Sections[6].Key;
+            || key == Sections[6].Key
+            || key == Sections[7].Key;
 
         if (!isKnownSection)
         {
@@ -188,6 +199,11 @@ public sealed class MainWindowViewModel : ViewModelBase
         if (string.Equals(key, Sections[6].Key, System.StringComparison.Ordinal))
         {
             ToolDefinitions.RefreshCommand.Execute(null);
+        }
+
+        if (string.Equals(key, Sections[7].Key, System.StringComparison.Ordinal))
+        {
+            ScheduledJobs.RefreshCommand.Execute(null);
         }
     }
 

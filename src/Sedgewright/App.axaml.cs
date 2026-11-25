@@ -23,12 +23,14 @@ using Sedgewright.ViewModels.FirstRun;
 using Sedgewright.ViewModels.MainWindow;
 using Sedgewright.ViewModels.Mcp;
 using Sedgewright.ViewModels.Orchestrations;
+using Sedgewright.ViewModels.ScheduledJobs;
 using Sedgewright.ViewModels.Settings;
 using Sedgewright.ViewModels.Tools;
 using Sedgewright.ViewModels.Workspace;
 using Sedgewright.Infras.Services;
 using Sedgewright.Views.FirstRun;
 using Sedgewright.Views.MainWindow;
+using Sedgewright.Views.ScheduledJobs;
 
 namespace Sedgewright;
 
@@ -106,6 +108,8 @@ public partial class App : Avalonia.Application
         services.AddSingleton<IToolDefinitionDialogService, ToolDefinitionDialogService>();
         services.AddSingleton<ToolDefinitionsViewModel>();
         services.AddSingleton<OrchestrationDefinitionsViewModel>();
+        services.AddSingleton<ScheduledJobsViewModel>();
+        services.AddSingleton<IScheduledJobDialogService, ScheduledJobDialogService>();
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<WorkspaceTreePanelViewModel>();
         services.AddSingleton<OrchestrationUseCases>();
