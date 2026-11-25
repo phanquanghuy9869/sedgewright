@@ -126,10 +126,38 @@ Sedgewright is an actively developed desktop application. The core composition l
 
 ### Requirements
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download).
+- [.NET 10 SDK](https://dotnet.microsoft.com/download) to build from source. The packaging scripts use an existing .NET 10+ SDK or install .NET 11 locally if needed.
 - A desktop environment. The UI uses Avalonia, and release packages are produced for Windows (`win-x64`), macOS (`osx-x64`), and Linux (`linux-x64`).
 - Credentials for at least one provider, or GitHub Copilot access.
 - Docker, only if an agent uses the Docker shell executor.
+
+### Build installers
+
+The Velopack build scripts publish a self-contained app for the current OS and create install/update packages under `artifacts/releases/<runtime-id>`. Run each script on the OS you want to package:
+
+```powershell
+# Windows (defaults to version 0.0.1 and the host architecture)
+powershell -ExecutionPolicy Bypass -File builds/build.ps1
+powershell -ExecutionPolicy Bypass -File builds/build.ps1 -Version 1.2.0 -RuntimeIdentifier win-x64
+```
+
+```bash
+# macOS
+bash builds/build-macos.sh
+bash builds/build-macos.sh --version 1.2.0 --rid osx-arm64
+
+# Linux
+bash builds/build-linux
+bash builds/build-linux --version 1.2.0 --rid linux-x64
+```
+
+If .NET 10 or newer is not available, a script installs the .NET 11 SDK into the current user's home directory using Microsoft's [`dotnet-install` script](https://learn.microsoft.com/dotnet/core/tools/dotnet-install-script). The scripts install or update the global `vpk` tool to version 1.2.161 to match the Velopack package used by the app. No administrator access is required for these per-user installs. The selected runtime's publish and release folders are cleared before each build.
+
+Velopack packaging is host-specific; use the Windows, macOS, and Linux scripts on their corresponding operating systems. Windows produces a setup executable, macOS an app bundle and ZIP, and Linux an AppImage rather than a setup installer. See the [Velopack packaging overview](https://docs.velopack.io/packaging/overview) for release-file details.
+
+### Automated GitHub releases
+
+Each push to `main` runs the GitHub Actions release workflow. It builds `win-x64`, `osx-x64`, and `linux-x64` on native Windows, macOS, and Linux hosted runners, validates the Velopack outputs, and publishes a stable GitHub Release. The macOS job uses an Intel macOS runner.
 
 ### Run from source
 

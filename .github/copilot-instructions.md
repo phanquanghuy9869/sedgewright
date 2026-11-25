@@ -1,8 +1,8 @@
-# Sentinel Agent Notes
+# Sedgewright Agent Notes
 
-This is a cross-platform Avalonia UI app built as a single `Sentinel.UI` project. Keep UI in Views and ViewModels, keep app logic inside the project folders, and avoid Windows-only APIs.
+This is a cross-platform Avalonia UI app built as a single `Sedgewright` project. Keep UI in Views and ViewModels, keep app logic inside the project folders, and avoid Windows-only APIs.
 
-The app also uses the GitHub Copilot SDK through `Sentinel.UI`. Prefer async/await, deterministic behavior, and small structured chat responses. Keep guidance concise and developer-focused.
+The app also uses the GitHub Copilot SDK through `Sedgewright`. Prefer async/await, deterministic behavior, and small structured chat responses. Keep guidance concise and developer-focused.
 
 # Rules
 
@@ -16,7 +16,7 @@ The app also uses the GitHub Copilot SDK through `Sentinel.UI`. Prefer async/awa
 - Prefer compact, borderless, minimal controls with small text.
 
 ## Project Structure
-- `Sentinel.UI` is the only app project. Inside it:
+- `Sedgewright` is the only app project. Inside it:
 - `Views` folder contains Avalonia windows and controls.
 - `ViewModels` folder contains binding state, commands, and UI coordination.
 - `Apps` folder contains application workflows, orchestration, and use-case services.
@@ -25,7 +25,7 @@ The app also uses the GitHub Copilot SDK through `Sentinel.UI`. Prefer async/awa
 - Keep shared logic out of Views and code-behind; prefer ViewModels plus the `Apps`, `Models`, and `Infras` folders for reusable responsibilities.
 
 ## For migrations
-- Only create migrations by running this command in the `Sentinel.UI` project folder, never try to generate migration files manually.
+- Only create migrations by running this command in the `Sedgewright` project folder, never try to generate migration files manually.
 ```bash
 dotnet ef migrations add <MigrationName>
 ```
@@ -67,7 +67,7 @@ dotnet ef migrations add <MigrationName>
   int[] squares = [1, 4, 9, 16];
   ```
 - Add comprehensive comments for newly created public classes and methods.
-- Prefer explicit typing over `var`. For example, use `string name = "Sentinel";` instead of `var name = "Sentinel"`.
+- Prefer explicit typing over `var`. For example, use `string name = "Sedgewright";` instead of `var name = "Sedgewright"`.
 
 ## CSharpFunctionalExtensions
 - Use `Result<T, IApplicationError>` for data-bearing operations and `UnitResult<IApplicationError>` for commands or validations that only need success/failure.
