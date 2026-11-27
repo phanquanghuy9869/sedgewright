@@ -28,12 +28,15 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
     private bool _isEnabled = true;
     private ScheduledJobTargetOptionViewModel? _selectedTarget;
     private ScheduleKindOptionViewModel? _selectedScheduleKind;
+    private string _targetFilter = string.Empty;
     private string _intervalMinutes = "60";
     private string _cronExpression = "0 0 9 * * ?";
     private string _timeZoneId = "UTC";
     private string _runAtText = string.Empty;
-    private string _startAtText = string.Empty;
-    private string _endAtText = string.Empty;
+    private DateTimeOffset? _startAtDate;
+    private TimeSpan? _startAtTime;
+    private DateTimeOffset? _endAtDate;
+    private TimeSpan? _endAtTime;
     private string _validationText = string.Empty;
 
     /// <summary>
@@ -49,6 +52,7 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
 
         TargetOptions = new ObservableCollection<ScheduledJobTargetOptionViewModel>(
             targets.Select(target => new ScheduledJobTargetOptionViewModel(target)));
+        FilteredTargetOptions = new ObservableCollection<ScheduledJobTargetOptionViewModel>(TargetOptions);
         ScheduleKindOptions =
         [
             new ScheduleKindOptionViewModel(ScheduleKind.Interval),
@@ -93,6 +97,32 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
     /// Gets the target options.
     /// </summary>
     public ObservableCollection<ScheduledJobTargetOptionViewModel> TargetOptions { get; }
+
+    /// <summary>
+    /// Gets the target options matching the current filter.
+    /// </summary>
+    public ObservableCollection<ScheduledJobTargetOptionViewModel> FilteredTargetOptions { get; }
+
+    /// <summary>
+    /// Gets whether the filter has no matching targets.
+    /// </summary>
+    public bool HasNoTargetMatches => !TargetOptions.Any(option =>
+        option.DisplayLabel.Contains(TargetFilter.Trim(), StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Gets or sets the target filter text.
+    /// </summary>
+    public string TargetFilter
+    {
+        get => _targetFilter;
+        set
+        {
+            if (SetProperty(ref _targetFilter, value))
+            {
+                RefreshFilteredTargetOptions();
+            }
+        }
+    }
 
     /// <summary>
     /// Gets the schedule kind options.
@@ -169,6 +199,7 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
         {
             if (SetProperty(ref _selectedTarget, value))
             {
+                RefreshFilteredTargetOptions();
                 OnEditorFieldChanged();
             }
         }
@@ -270,14 +301,14 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Gets or sets the optional local start boundary.
+    /// Gets or sets the optional local start boundary date.
     /// </summary>
-    public string StartAtText
+    public DateTimeOffset? StartAtDate
     {
-        get => _startAtText;
+        get => _startAtDate;
         set
         {
-            if (SetProperty(ref _startAtText, value))
+            if (SetProperty(ref _startAtDate, value))
             {
                 OnEditorFieldChanged();
             }
@@ -285,14 +316,44 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Gets or sets the optional local end boundary.
+    /// Gets or sets the optional local start boundary time.
     /// </summary>
-    public string EndAtText
+    public TimeSpan? StartAtTime
     {
-        get => _endAtText;
+        get => _startAtTime;
         set
         {
-            if (SetProperty(ref _endAtText, value))
+            if (SetProperty(ref _startAtTime, value))
+            {
+                OnEditorFieldChanged();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the optional local end boundary date.
+    /// </summary>
+    public DateTimeOffset? EndAtDate
+    {
+        get => _endAtDate;
+        set
+        {
+            if (SetProperty(ref _endAtDate, value))
+            {
+                OnEditorFieldChanged();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the optional local end boundary time.
+    /// </summary>
+    public TimeSpan? EndAtTime
+    {
+        get => _endAtTime;
+        set
+        {
+            if (SetProperty(ref _endAtTime, value))
             {
                 OnEditorFieldChanged();
             }
@@ -384,7 +445,7 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
         }
 
         ScheduleKind scheduleKind = SelectedScheduleKind.Kind;
-        DateTime? runAtUtc = null;
+        DateTimeOffset? runAt = null;
         int? intervalSeconds = null;
         string? cronExpression = null;
         string? timeZoneId = null;
@@ -406,7 +467,7 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
         }
         else
         {
-            runAtUtc = ParseLocalUtc(RunAtText, "one-time run time");
+            runAt = ParseLocal(RunAtText, "one-time run time");
         }
 
         return new ScheduledJob
@@ -421,9 +482,9 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
             IntervalSeconds = intervalSeconds,
             CronExpression = cronExpression,
             TimeZoneId = timeZoneId,
-            RunAtUtc = runAtUtc,
-            StartAtUtc = ParseOptionalLocalUtc(StartAtText),
-            EndAtUtc = ParseOptionalLocalUtc(EndAtText),
+            RunAt = runAt,
+            StartAt = CombineLocal(StartAtDate, StartAtTime),
+            EndAt = CombineLocal(EndAtDate, EndAtTime),
             IsEnabled = IsEnabled,
         };
     }
@@ -445,9 +506,53 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
 
         CronExpression = job.CronExpression ?? "0 0 9 * * ?";
         TimeZoneId = job.TimeZoneId ?? "UTC";
-        RunAtText = FormatLocal(job.RunAtUtc);
-        StartAtText = FormatLocal(job.StartAtUtc);
-        EndAtText = FormatLocal(job.EndAtUtc);
+        RunAtText = FormatLocal(job.RunAt);
+        StartAtDate = ToLocalDate(job.StartAt);
+        StartAtTime = job.StartAt?.ToLocalTime().TimeOfDay;
+        EndAtDate = ToLocalDate(job.EndAt);
+        EndAtTime = job.EndAt?.ToLocalTime().TimeOfDay;
+    }
+
+    private void RefreshFilteredTargetOptions()
+    {
+        string filter = TargetFilter.Trim();
+        List<ScheduledJobTargetOptionViewModel> filteredOptions = TargetOptions
+            .Where(option => option.DisplayLabel.Contains(filter, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (_selectedTarget is not null && !filteredOptions.Contains(_selectedTarget))
+        {
+            filteredOptions.Insert(0, _selectedTarget);
+        }
+
+        for (int index = FilteredTargetOptions.Count - 1; index >= 0; index--)
+        {
+            if (!filteredOptions.Contains(FilteredTargetOptions[index]))
+            {
+                FilteredTargetOptions.RemoveAt(index);
+            }
+        }
+
+        for (int index = 0; index < filteredOptions.Count; index++)
+        {
+            ScheduledJobTargetOptionViewModel option = filteredOptions[index];
+            if (index < FilteredTargetOptions.Count && ReferenceEquals(FilteredTargetOptions[index], option))
+            {
+                continue;
+            }
+
+            int currentIndex = FilteredTargetOptions.IndexOf(option);
+            if (currentIndex >= 0)
+            {
+                FilteredTargetOptions.Move(currentIndex, index);
+            }
+            else
+            {
+                FilteredTargetOptions.Insert(index, option);
+            }
+        }
+
+        OnPropertyChanged(nameof(HasNoTargetMatches));
     }
 
     private void OnEditorFieldChanged()
@@ -460,10 +565,45 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
         _saveCommand.RaiseCanExecuteChanged();
     }
 
-    private static DateTime? ParseOptionalLocalUtc(string text)
-        => string.IsNullOrWhiteSpace(text) ? null : ParseLocalUtc(text, "schedule boundary");
+    private static DateTimeOffset? CombineLocal(DateTimeOffset? date, TimeSpan? time)
+    {
+        if (date is not DateTimeOffset selectedDate)
+        {
+            return null;
+        }
 
-    private static DateTime ParseLocalUtc(string text, string fieldName)
+        TimeSpan selectedTime = time ?? TimeSpan.Zero;
+        DateTime localDateTime = new DateTime(
+            selectedDate.Year,
+            selectedDate.Month,
+            selectedDate.Day,
+            0,
+            0,
+            0,
+            DateTimeKind.Local).Add(selectedTime);
+
+        return new DateTimeOffset(localDateTime).ToUniversalTime();
+    }
+
+    private static DateTimeOffset? ToLocalDate(DateTimeOffset? value)
+    {
+        if (value is not DateTimeOffset date)
+        {
+            return null;
+        }
+
+        DateTimeOffset localDate = date.ToLocalTime();
+        return new DateTimeOffset(
+            localDate.Year,
+            localDate.Month,
+            localDate.Day,
+            0,
+            0,
+            0,
+            localDate.Offset);
+    }
+
+    private static DateTimeOffset ParseLocal(string text, string fieldName)
     {
         if (!DateTime.TryParseExact(
                 text.Trim(),
@@ -475,11 +615,11 @@ public sealed class ScheduledJobEditorViewModel : ViewModelBase
             throw new InvalidOperationException($"{fieldName} must use yyyy-MM-dd HH:mm.");
         }
 
-        return local.ToUniversalTime();
+        return new DateTimeOffset(local).ToUniversalTime();
     }
 
-    private static string FormatLocal(DateTime? value)
-        => value is DateTime date
+    private static string FormatLocal(DateTimeOffset? value)
+        => value is DateTimeOffset date
             ? date.ToLocalTime().ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
             : string.Empty;
 }

@@ -7,10 +7,10 @@
         x:Class="Sedgewright.Views.ScheduledJobs.ScheduledJobEditorWindow"
         x:DataType="scheduled:ScheduledJobEditorViewModel"
         Title="{Binding WindowTitle}"
-        Width="760"
-        Height="720"
-        MinWidth="620"
-        MinHeight="580"
+        Width="1180"
+        Height="760"
+        MinWidth="1040"
+        MinHeight="620"
         WindowStartupLocation="CenterOwner"
         WindowDecorations="None"
         Background="{DynamicResource CanvasBrush}">
@@ -61,9 +61,8 @@
                           VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <Grid Classes="modal-scroll-content"
-                      ColumnDefinitions="*,*"
+                      ColumnDefinitions="0.85*,1.35*"
                       ColumnSpacing="14"
-                      RowDefinitions="Auto,Auto"
                       RowSpacing="14">
                     <StackPanel Spacing="12">
                         <Border Classes="field-surface">
@@ -90,19 +89,26 @@
                         </Border>
 
                         <Border Classes="field-surface">
-                            <StackPanel Spacing="8">
+                            <StackPanel Spacing="10">
                                 <TextBlock Text="TARGET"
                                            Classes="eyebrow" />
-                                <ComboBox ItemsSource="{Binding TargetOptions}"
-                                          SelectedItem="{Binding SelectedTarget, Mode=TwoWay}"
-                                          PlaceholderText="Select an agent or orchestration"
-                                          HorizontalAlignment="Stretch">
-                                    <ComboBox.ItemTemplate>
+                                <TextBox Text="{Binding TargetFilter, Mode=TwoWay}"
+                                         PlaceholderText="Filter agents and orchestrations" />
+                                <ListBox ItemsSource="{Binding FilteredTargetOptions}"
+                                         SelectedItem="{Binding SelectedTarget, Mode=TwoWay}"
+                                         Height="190"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                    <ListBox.ItemTemplate>
                                         <DataTemplate x:DataType="scheduled:ScheduledJobTargetOptionViewModel">
-                                            <TextBlock Text="{Binding DisplayLabel}" />
+                                            <TextBlock Text="{Binding DisplayLabel}"
+                                                       TextTrimming="CharacterEllipsis" />
                                         </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <TextBlock Text="No matching targets. The current selection stays available."
+                                           IsVisible="{Binding HasNoTargetMatches}"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource MutedBrush}" />
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -116,7 +122,7 @@
                                 <TextBox Text="{Binding Prompt, Mode=TwoWay}"
                                          AcceptsReturn="True"
                                          TextWrapping="Wrap"
-                                         MinHeight="150"
+                                         MinHeight="230"
                                          VerticalContentAlignment="Top"
                                          PlaceholderText="Write the prompt the target should receive." />
                             </StackPanel>
@@ -126,30 +132,34 @@
                             <StackPanel Spacing="10">
                                 <TextBlock Text="SCHEDULE"
                                            Classes="eyebrow" />
-                                <ComboBox ItemsSource="{Binding ScheduleKindOptions}"
-                                          SelectedItem="{Binding SelectedScheduleKind, Mode=TwoWay}"
-                                          HorizontalAlignment="Stretch">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate x:DataType="scheduled:ScheduleKindOptionViewModel">
-                                            <TextBlock Text="{Binding Label}" />
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
+                                <Grid ColumnDefinitions="Auto,*"
+                                      ColumnSpacing="10">
+                                    <ComboBox Grid.Column="0"
+                                              Width="150"
+                                              ItemsSource="{Binding ScheduleKindOptions}"
+                                              SelectedItem="{Binding SelectedScheduleKind, Mode=TwoWay}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate x:DataType="scheduled:ScheduleKindOptionViewModel">
+                                                <TextBlock Text="{Binding Label}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
 
-                                <StackPanel Spacing="6"
-                                            IsVisible="{Binding IsIntervalSchedule}">
-                                    <TextBlock Text="Every"
-                                               FontWeight="SemiBold" />
-                                    <Grid ColumnDefinitions="*,Auto"
-                                          ColumnSpacing="8">
+                                    <StackPanel Grid.Column="1"
+                                                Orientation="Horizontal"
+                                                Spacing="8"
+                                                IsVisible="{Binding IsIntervalSchedule}">
+                                        <TextBlock Text="Every"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center" />
                                         <TextBox Text="{Binding IntervalMinutes, Mode=TwoWay}"
-                                                 HorizontalAlignment="Stretch" />
-                                        <TextBlock Grid.Column="1"
-                                                   Text="minutes"
+                                                 Width="72"
+                                                 HorizontalContentAlignment="Center" />
+                                        <TextBlock Text="minutes"
                                                    VerticalAlignment="Center"
                                                    Foreground="{DynamicResource MutedBrush}" />
-                                    </Grid>
-                                </StackPanel>
+                                    </StackPanel>
+                                </Grid>
 
                                 <StackPanel Spacing="8"
                                             IsVisible="{Binding IsCronSchedule}">
@@ -176,28 +186,41 @@
                                 </StackPanel>
                             </StackPanel>
                         </Border>
-                    </StackPanel>
 
-                    <Border Grid.Row="1"
-                            Grid.ColumnSpan="2"
-                            Classes="field-surface">
-                        <Grid ColumnDefinitions="*,*"
-                              ColumnSpacing="12">
+                        <Border Classes="field-surface">
                             <StackPanel Spacing="6">
+                                <TextBlock Text="BOUNDARIES"
+                                           Classes="eyebrow" />
                                 <TextBlock Text="Start boundary"
                                            FontWeight="SemiBold" />
-                                <TextBox Text="{Binding StartAtText, Mode=TwoWay}"
-                                         PlaceholderText="Optional: yyyy-MM-dd HH:mm" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1"
-                                        Spacing="6">
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="8">
+                                    <DatePicker SelectedDate="{Binding StartAtDate, Mode=TwoWay}"
+                                                MonthFormat="MMM"
+                                                DayFormat="dd"
+                                                YearFormat="yy"
+                                                Width="190" />
+                                    <TimePicker SelectedTime="{Binding StartAtTime, Mode=TwoWay}"
+                                                ClockIdentifier="24HourClock"
+                                                Width="110" />
+                                </StackPanel>
                                 <TextBlock Text="End boundary"
-                                           FontWeight="SemiBold" />
-                                <TextBox Text="{Binding EndAtText, Mode=TwoWay}"
-                                         PlaceholderText="Optional: yyyy-MM-dd HH:mm" />
+                                           FontWeight="SemiBold"
+                                           Margin="0,8,0,0" />
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="8">
+                                    <DatePicker SelectedDate="{Binding EndAtDate, Mode=TwoWay}"
+                                                MonthFormat="MMM"
+                                                DayFormat="dd"
+                                                YearFormat="yy"
+                                                Width="190" />
+                                    <TimePicker SelectedTime="{Binding EndAtTime, Mode=TwoWay}"
+                                                ClockIdentifier="24HourClock"
+                                                Width="110" />
+                                </StackPanel>
                             </StackPanel>
-                        </Grid>
-                    </Border>
+                        </Border>
+                    </StackPanel>
                 </Grid>
             </ScrollViewer>
 
