@@ -25,6 +25,7 @@ using Sedgewright.ViewModels.Mcp;
 using Sedgewright.ViewModels.Orchestrations;
 using Sedgewright.ViewModels.ScheduledJobs;
 using Sedgewright.ViewModels.Settings;
+using Sedgewright.ViewModels.Skills;
 using Sedgewright.ViewModels.Tools;
 using Sedgewright.ViewModels.Workspace;
 using Sedgewright.Infras.Services;
@@ -100,6 +101,7 @@ public partial class App : Avalonia.Application
         services.AddSingleton<IChatTargetCatalogService, ChatTargetCatalogService>();
         services.AddSingleton<IChatTargetDialogService, ChatTargetDialogService>();
         services.AddSingleton<IAgentSkillDiscoveryService, AgentSkillDiscoveryService>();
+        services.AddSingleton<SkillDefinitionsViewModel>();
         services.AddSingleton<SettingsViewModel>();
         services.AddSingleton<AgentDefinitionsViewModel>();
         services.AddSingleton<IOrchestrationDialogService, OrchestrationDialogService>();

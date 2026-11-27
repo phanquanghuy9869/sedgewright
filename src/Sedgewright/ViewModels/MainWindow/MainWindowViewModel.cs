@@ -7,6 +7,7 @@ using Sedgewright.ViewModels.Mcp;
 using Sedgewright.ViewModels.Orchestrations;
 using Sedgewright.ViewModels.ScheduledJobs;
 using Sedgewright.ViewModels.Settings;
+using Sedgewright.ViewModels.Skills;
 using Sedgewright.ViewModels.Tools;
 using Sedgewright.ViewModels.Workspace;
 
@@ -36,6 +37,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         ChatViewModel chat,
         SettingsViewModel settings,
         McpDefinitionsViewModel mcpDefinitions,
+        SkillDefinitionsViewModel skillDefinitions,
         OrchestrationDefinitionsViewModel orchestrationDefinitions,
         AgentDefinitionsViewModel agentDefinitions,
         ToolDefinitionsViewModel toolDefinitions,
@@ -45,6 +47,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         Chat = chat;
         Settings = settings;
         McpDefinitions = mcpDefinitions;
+        SkillDefinitions = skillDefinitions;
         OrchestrationDefinitions = orchestrationDefinitions;
         AgentDefinitions = agentDefinitions;
         ToolDefinitions = toolDefinitions;
@@ -71,6 +74,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ChatViewModel Chat { get; }
 
     public McpDefinitionsViewModel McpDefinitions { get; }
+
+    public SkillDefinitionsViewModel SkillDefinitions { get; }
 
     public OrchestrationDefinitionsViewModel OrchestrationDefinitions { get; }
 

@@ -9,6 +9,7 @@
         xmlns:orch="using:Sedgewright.Views.Orchestrations"
         xmlns:settings="using:Sedgewright.Views.Settings"
         xmlns:schedule="using:Sedgewright.Views.ScheduledJobs"
+        xmlns:skills="using:Sedgewright.Views.Skills"
         xmlns:tools="using:Sedgewright.Views.Tools"
         xmlns:workspace="using:Sedgewright.Views.Workspace"
         xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
@@ -251,8 +252,8 @@
         <mcp:McpDefinitionsView DataContext="{Binding McpDefinitions}"
                                 IsVisible="{Binding DataContext.IsMcpSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
 
-        <Border IsVisible="{Binding DataContext.IsSkillsSelected, RelativeSource={RelativeSource AncestorType=Window}}"
-                Background="Transparent" />
+        <skills:SkillDefinitionsView DataContext="{Binding SkillDefinitions}"
+                                     IsVisible="{Binding DataContext.IsSkillsSelected, RelativeSource={RelativeSource AncestorType=Window}}" />
 
         <orch:OrchestrationDefinitionsView DataContext="{Binding OrchestrationDefinitions}"
                                            IsVisible="{Binding DataContext.IsAgentOrchestrationSelected, RelativeSource={RelativeSource AncestorType=Window}}" />

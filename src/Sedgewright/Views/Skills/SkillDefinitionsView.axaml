@@ -1,0 +1,206 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:skills="using:Sedgewright.ViewModels.Skills"
+             mc:Ignorable="d"
+             x:Class="Sedgewright.Views.Skills.SkillDefinitionsView"
+             x:DataType="skills:SkillDefinitionsViewModel">
+    <UserControl.Styles>
+        <Style Selector="Button.skill-refresh">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="11,7" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+
+        <Style Selector="Border.skill-source">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+
+        <Style Selector="Border.skill-card">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ListSeparatorBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Padding" Value="8,9" />
+        </Style>
+
+        <Style Selector="Border.skill-card:pointerover">
+            <Setter Property="Background" Value="{DynamicResource ListRowHoverBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="14,10,14,14"
+                    Spacing="14">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12"
+                  VerticalAlignment="Center">
+                <StackPanel Spacing="3">
+                    <TextBlock Text="{Binding TitleText}"
+                               FontSize="20"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding SubtitleText}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource MutedBrush}" />
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Classes="skill-refresh"
+                        VerticalAlignment="Top" />
+            </Grid>
+
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12"
+                  IsVisible="{Binding HasSkills}">
+                <TextBox Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="Filter skills by name or path..."
+                         FontSize="11"
+                         Padding="10,8"
+                         MinHeight="34"
+                         CornerRadius="8" />
+
+                <Border Grid.Column="1"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="10,7"
+                        MinWidth="116"
+                        VerticalAlignment="Stretch">
+                    <TextBlock Text="{Binding SkillSummaryText}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontSize="11"
+                               Foreground="{DynamicResource MutedBrush}" />
+                </Border>
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding VisibleSkillSources}"
+                          IsVisible="{Binding HasSkills}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="skills:SkillSourceViewModel">
+                        <Border Classes="skill-source"
+                                Margin="0,0,0,8">
+                            <Grid RowDefinitions="Auto,Auto"
+                                  RowSpacing="8">
+                                <Grid ColumnDefinitions="Auto,*"
+                                      ColumnSpacing="9">
+                                    <Border Width="28"
+                                            Height="28"
+                                            CornerRadius="8"
+                                            Background="{DynamicResource AccentTintBrush}"
+                                            VerticalAlignment="Top">
+                                        <TextBlock Text="S"
+                                                   Foreground="{DynamicResource AccentBrush}"
+                                                   FontSize="12"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1"
+                                                Spacing="1"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Directory}"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource MutedBrush}"
+                                                   TextWrapping="Wrap"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <ItemsControl Grid.Row="1"
+                                              ItemsSource="{Binding VisibleSkills}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="skills:SkillItemViewModel">
+                                            <Border Classes="skill-card">
+                                                <Grid ColumnDefinitions="Auto,*"
+                                                      ColumnSpacing="9">
+                                                    <Border Width="7"
+                                                            Height="7"
+                                                            CornerRadius="4"
+                                                            Background="{DynamicResource AccentBrush}"
+                                                            Margin="2,0,0,0"
+                                                            VerticalAlignment="Center" />
+
+                                                    <StackPanel Grid.Column="1"
+                                                                Spacing="1">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   FontWeight="SemiBold" />
+                                                        <TextBlock Text="{Binding RelativePath}"
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource MutedBrush}"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border IsVisible="{Binding HasNoSkills}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="18"
+                    Background="{DynamicResource SurfaceBrush}">
+                <StackPanel Spacing="4"
+                            HorizontalAlignment="Center">
+                    <TextBlock Text="No skills found"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Add a folder containing SKILL.md to the working directory or a common agent location."
+                               FontSize="11"
+                               Foreground="{DynamicResource MutedBrush}"
+                               TextWrapping="Wrap"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <Border IsVisible="{Binding HasNoMatches}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="18"
+                    Background="{DynamicResource SurfaceBrush}">
+                <StackPanel Spacing="4"
+                            HorizontalAlignment="Center">
+                    <TextBlock Text="No matching skills"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Try a shorter name or clear the filter."
+                               FontSize="11"
+                               Foreground="{DynamicResource MutedBrush}"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="{Binding StatusText}"
+                       IsVisible="{Binding HasStatusText}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource MutedBrush}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
