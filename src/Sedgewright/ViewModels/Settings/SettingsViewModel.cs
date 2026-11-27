@@ -33,6 +33,8 @@ namespace Sedgewright.ViewModels.Settings;
         private bool _isApplyingUpdate;
         private string _availableVersion = string.Empty;
         private string _updateStatusText = string.Empty;
+        private string _selectedSettingsSection = "Providers";
+        private readonly RelayCommand _selectSettingsSectionCommand;
 
     public SettingsViewModel(
         LLMProviderRepository providerRepository,
@@ -50,6 +52,7 @@ namespace Sedgewright.ViewModels.Settings;
         _checkForUpdatesCommand = new AsyncRelayCommand(CheckForUpdatesAsync, () => !IsUpdateBusy);
         _updateNowCommand = new AsyncRelayCommand(UpdateNowAsync, () => CanUpdateNow);
         _browseDefaultWorkingDirectoryCommand = new RelayCommand(RequestDefaultWorkingDirectorySelection);
+        _selectSettingsSectionCommand = new RelayCommand(SelectSettingsSection);
 
         InitializeProviders(Array.Empty<LLMProvider>());
         _ = InitializeAsync();
@@ -194,8 +197,76 @@ namespace Sedgewright.ViewModels.Settings;
 
     public ICommand BrowseDefaultWorkingDirectoryCommand => _browseDefaultWorkingDirectoryCommand;
 
+    /// <summary>
+    /// Gets the command used to switch the Settings content section.
+    /// </summary>
+    public ICommand SelectSettingsSectionCommand => _selectSettingsSectionCommand;
+
+    /// <summary>
+    /// Gets or sets the currently visible Settings section.
+    /// </summary>
+    public string SelectedSettingsSection
+    {
+        get => _selectedSettingsSection;
+        private set
+        {
+            if (!SetProperty(ref _selectedSettingsSection, value))
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(IsProvidersSelected));
+            OnPropertyChanged(nameof(IsChatSelected));
+            OnPropertyChanged(nameof(IsAppearanceSelected));
+            OnPropertyChanged(nameof(IsAdvancedSelected));
+            OnPropertyChanged(nameof(IsUpdatesSelected));
+        }
+    }
+
+    /// <summary>
+    /// Gets whether the Providers section is visible.
+    /// </summary>
+    public bool IsProvidersSelected => SelectedSettingsSection == "Providers";
+
+    /// <summary>
+    /// Gets whether the Chat section is visible.
+    /// </summary>
+    public bool IsChatSelected => SelectedSettingsSection == "Chat";
+
+    /// <summary>
+    /// Gets whether the Appearance section is visible.
+    /// </summary>
+    public bool IsAppearanceSelected => SelectedSettingsSection == "Appearance";
+
+    /// <summary>
+    /// Gets whether the Advanced section is visible.
+    /// </summary>
+    public bool IsAdvancedSelected => SelectedSettingsSection == "Advanced";
+
+    /// <summary>
+    /// Gets whether the Updates section is visible.
+    /// </summary>
+    public bool IsUpdatesSelected => SelectedSettingsSection == "Updates";
+
     public bool CanSaveAll => !_isSaving
         && (_isApplicationSettingsDirty || Providers.Any(p => p.IsDirty));
+
+    private void SelectSettingsSection(object? parameter)
+    {
+        if (parameter is not string section)
+        {
+            return;
+        }
+
+        SelectedSettingsSection = section switch
+        {
+            "Chat" => "Chat",
+            "Appearance" => "Appearance",
+            "Advanced" => "Advanced",
+            "Updates" => "Updates",
+            _ => "Providers",
+        };
+    }
 
     private static LlmProviderKind ParseProviderKind(string providerKind)
         => Enum.TryParse(providerKind, ignoreCase: true, out LlmProviderKind parsedKind)

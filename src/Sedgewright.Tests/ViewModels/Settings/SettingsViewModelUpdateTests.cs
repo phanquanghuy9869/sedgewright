@@ -21,6 +21,23 @@ namespace Sedgewright.Tests.ViewModels.Settings;
 public sealed class SettingsViewModelUpdateTests
 {
     [Test]
+    public void SelectSettingsSectionCommand_SwitchesVisibleSection()
+    {
+        FakeUpdateService updateService = new(new UpdateCheckResult(false, "1.0.0", null));
+        using SedgewrightDbContext context = CreateContext();
+        SettingsViewModel viewModel = CreateViewModel(context, updateService);
+
+        viewModel.SelectSettingsSectionCommand.Execute("Appearance");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(viewModel.SelectedSettingsSection, Is.EqualTo("Appearance"));
+            Assert.That(viewModel.IsAppearanceSelected, Is.True);
+            Assert.That(viewModel.IsProvidersSelected, Is.False);
+        }
+    }
+
+    [Test]
     public async Task UpdateService_CanBeConstructedOutsideVelopackInstallation()
     {
         UpdateService updateService = new();
